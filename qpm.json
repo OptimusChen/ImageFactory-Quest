@@ -1,0 +1,46 @@
+{
+  "sharedDir": "shared",
+  "dependenciesDir": "extern",
+  "info": {
+    "name": "ImageFactory",
+    "id": "imagefactory",
+    "version": "0.1.0",
+    "url": null,
+    "additionalData": {
+      "overrideSoName": "libimagefactory.so"
+    }
+  },
+  "dependencies": [
+    {
+      "id": "modloader",
+      "versionRange": "^1.2.3",
+      "additionalData": {}
+    },
+    {
+      "id": "beatsaber-hook",
+      "versionRange": "^3.10.0",
+      "additionalData": {}
+    },
+    {
+      "id": "codegen",
+      "versionRange": "^0.25.0",
+      "additionalData": {}
+    },
+    {
+      "id": "custom-types",
+      "versionRange": "^0.15.18",
+      "additionalData": {}
+    },
+    {
+      "id": "questui",
+      "versionRange": "^0.16.4",
+      "additionalData": {}
+    },
+    {
+      "id": "config-utils",
+      "versionRange": "^0.8.0",
+      "additionalData": {}
+    }
+  ],
+  "additionalData": {}
+}
