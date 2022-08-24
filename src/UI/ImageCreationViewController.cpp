@@ -15,6 +15,7 @@
 #include "UnityEngine/WaitForSeconds.hpp"
 #include "GlobalNamespace/SharedCoroutineStarter.hpp"
 #include "custom-types/shared/delegate.hpp"
+#include "HMUI/ImageView.hpp"
 #include "main.hpp"
 
 DEFINE_TYPE(ImageFactory::UI, ImageCreationViewController);
@@ -27,6 +28,13 @@ using namespace System;
 using namespace HMUI;
 
 #define StartCoroutine(method) GlobalNamespace::SharedCoroutineStarter::get_instance()->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(method))
+
+#define SetPreferredSize(identifier, width, height)                                         \
+    auto layout##identifier = identifier->get_gameObject()->GetComponent<LayoutElement*>(); \
+    if (!layout##identifier)                                                                \
+        layout##identifier = identifier->get_gameObject()->AddComponent<LayoutElement*>();  \
+    layout##identifier->set_preferredWidth(width);                                          \
+    layout##identifier->set_preferredHeight(height)
 
 namespace ImageFactory::UI {
 
@@ -109,7 +117,9 @@ namespace ImageFactory::UI {
 
             Sprite* sprite = BeatSaberUI::FileToSprite(image.c_str());
 
-            BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite, Vector2(2.0f, 0.0f), Vector2(10.0f, 2.0f))->set_preserveAspect(false);
+            auto img = BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite, Vector2(2.0f, 0.0f), Vector2(10.0f, 2.0f));
+
+            SetPreferredSize(img, 10.0f, 2.0f);
 
             System::IO::FileStream* stream = System::IO::FileStream::New_ctor(image.c_str(), System::IO::FileMode::Open);
 
@@ -127,7 +137,7 @@ namespace ImageFactory::UI {
 
                     auto container = BeatSaberUI::CreateScrollableModalContainer(modal);
 
-                    BeatSaberUI::CreateImage(modal->get_transform(), sprite, Vector2(-18.0f, 8.0f),
+                    auto imgModal = BeatSaberUI::CreateImage(modal->get_transform(), sprite, Vector2(-18.0f, 8.0f),
                         Vector2(30.0f, 30.0f));
 
                     auto anim = BeatSaberUI::CreateText(modal->get_transform(), "Animated: No",
@@ -153,7 +163,12 @@ namespace ImageFactory::UI {
                     BeatSaberUI::CreateUIButton(modal->get_transform(), "CREATE", Vector2(14.0f, -17.0f),
                         Vector2(30.0f, 10.0f), [=]() { 
                             getLogger().info("test 0");
-                            ArrayUtil::First(Object::FindObjectsOfType<ImageFactoryFlowCoordinator*>())->CreateImage(image.c_str());
+                            ImageFactoryFlowCoordinator* flow = ArrayUtil::First(Object::FindObjectsOfType<ImageFactoryFlowCoordinator*>());
+
+                            if (flow) {
+                                flow->CreateImage(image.c_str());
+                            }
+                            
                             getLogger().info("test 0.1");
                         });
 

@@ -1,7 +1,7 @@
 #include "UI/ImageFactoryFlowCoordinator.hpp"
 
 #include "main.hpp"
-#include "Presentors/PresentorManager.hpp"
+#include "Presenters/PresenterManager.hpp"
 #include "UI/ImageCreatorViewController.hpp"
 #include "HMUI/ViewController_AnimationDirection.hpp"
 #include "HMUI/ViewController_AnimationType.hpp"
@@ -26,12 +26,8 @@ namespace ImageFactory::UI {
             imageEditingViewController = reinterpret_cast<ImageEditingViewController*>(CreateViewController<ImageEditingViewController*>());
             imageFactoryViewController = reinterpret_cast<ImageFactoryViewController*>(CreateViewController<ImageFactoryViewController*>());
         
-            imageEditingViewController->Refresh();
-
             ProvideInitialViewControllers(imageFactoryViewController, imageCreationViewController, imageEditingViewController, nullptr, nullptr);
         }             
-
-        SetRightScreenViewController(imageEditingViewController, HMUI::ViewController::AnimationType::In);
     }
 
     void ImageFactoryFlowCoordinator::CreateImage(StringW path) {
@@ -41,11 +37,11 @@ namespace ImageFactory::UI {
 
         viewController->Initialize(path);
 
+        PresenterManager::DespawnAll();
+        
         SetLeftScreenViewController(BeatSaberUI::CreateViewController<HMUI::ViewController*>(), HMUI::ViewController::AnimationType::In);
         SetRightScreenViewController(BeatSaberUI::CreateViewController<HMUI::ViewController*>(), HMUI::ViewController::AnimationType::In);
         ReplaceTopViewController(viewController, this, this, nullptr, HMUI::ViewController::AnimationType::In, HMUI::ViewController::AnimationDirection::Horizontal);
-        
-        PresentorManager::DespawnAll();
     }
 
     void ImageFactoryFlowCoordinator::BackButtonWasPressed(HMUI::ViewController* topView) {
@@ -56,6 +52,20 @@ namespace ImageFactory::UI {
         ReplaceTopViewController(imageFactoryViewController, this, this, nullptr, HMUI::ViewController::AnimationType::In, HMUI::ViewController::AnimationDirection::Horizontal);
         SetLeftScreenViewController(imageCreationViewController, HMUI::ViewController::AnimationType::In);
         SetRightScreenViewController(imageEditingViewController, HMUI::ViewController::AnimationType::In);
+    }
+
+    void ImageFactoryFlowCoordinator::EditImage(IFImage* image) {
+        ImageCreatorViewController* viewController = reinterpret_cast<ImageCreatorViewController*>(BeatSaberUI::CreateViewController<ImageCreatorViewController*>());
+
+        if (!viewController) return;
+
+        viewController->InitializeEditor(image);
+
+        PresenterManager::DespawnAll();
+        
+        SetLeftScreenViewController(BeatSaberUI::CreateViewController<HMUI::ViewController*>(), HMUI::ViewController::AnimationType::In);
+        SetRightScreenViewController(BeatSaberUI::CreateViewController<HMUI::ViewController*>(), HMUI::ViewController::AnimationType::In);
+        ReplaceTopViewController(viewController, this, this, nullptr, HMUI::ViewController::AnimationType::In, HMUI::ViewController::AnimationDirection::Horizontal);
     }
 }
 

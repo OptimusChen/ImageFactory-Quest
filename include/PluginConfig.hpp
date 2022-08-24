@@ -8,6 +8,7 @@
 
 #include "main.hpp"
 
+#include "custom-types/shared/coroutine.hpp"
 #include "config-utils/shared/config-utils.hpp"
 
 DECLARE_CONFIG(PluginConfig, 
@@ -30,6 +31,7 @@ namespace ImageFactory {
             static void Reset();
             static void Delete(IFImage* image);
             static void Add(IFImage* image);
-            static void LoadImages();
+            static void Update(IFImage* image);
+            static custom_types::Helpers::Coroutine LoadImages();
     };
 }

@@ -43,8 +43,7 @@ namespace UIUtils {
 
         Backgroundable* background =
             horizontal->get_gameObject()->AddComponent<Backgroundable*>();
-        background->ApplyBackgroundWithAlpha(il2cpp_utils::newcsstr("panel-top"),
-                                             1.0f);
+        background->ApplyBackgroundWithAlpha("round-rect-panel", color.a);
 
         ImageView* imageView =
             background->get_gameObject()->GetComponentInChildren<ImageView*>();
@@ -67,59 +66,14 @@ namespace UIUtils {
         SetPreferredSize(containerGroup, 20, 80);
 
         auto bg = containerGroup->get_gameObject()->AddComponent<Backgroundable*>();
-        bg->ApplyBackground(il2cpp_utils::newcsstr("panel-top"));
+        bg->ApplyBackground(il2cpp_utils::newcsstr("round-rect-panel"));
         bg->background->set_color(color);
 
         return bg;
     }
 
     Backgroundable* CreateHeader(Transform* transform, std::string name) {
-        return CreateHeader(transform, name, {38.0f, 0.0f, 0.0f}, Color(0.1f, 0.1f, 0.1f, 0.0f), 100, 10);
-
-        // GameObject* mainLayout = GameObject::New_ctor();
-        // RectTransform* parent = mainLayout->AddComponent<RectTransform*>();
-        // parent->SetParent(transform, false);
-        // parent->set_localPosition(Vector3(38.0f, 0.0f, 0.0f));
-
-        // VerticalLayoutGroup* vertical = BeatSaberUI::CreateVerticalLayoutGroup(parent);
-        // vertical->get_rectTransform()->set_anchoredPosition({40.0f, 35.0f});
-        // HorizontalLayoutGroup* horizontal =
-        //     BeatSaberUI::CreateHorizontalLayoutGroup(vertical->get_transform());
-
-        // auto layoutElem = horizontal->GetComponent<LayoutElement*>();
-        // layoutElem->set_preferredHeight(10);
-        // layoutElem->set_preferredWidth(100);
-
-        // Backgroundable* background =
-        //     horizontal->get_gameObject()->AddComponent<Backgroundable*>();
-        // background->ApplyBackgroundWithAlpha(il2cpp_utils::newcsstr("panel-top"),
-        //                                      1.0f);
-
-        // ImageView* imageView =
-        //     background->get_gameObject()->GetComponentInChildren<ImageView*>();
-        // imageView->gradient = true;
-        // imageView->gradientDirection = 0;
-        // imageView->set_color(UnityEngine::Color::get_white());
-        // imageView->set_color0(UnityEngine::Color(0.1f, 0.1f, 0.1f, 0.5f));
-        // imageView->set_color1(UnityEngine::Color(0.1f, 0.1f, 0.1f, 0.5f));
-        // imageView->curvedCanvasSettingsHelper->Reset();
-
-        // HorizontalLayoutGroup* header = horizontal;
-
-        // TextMeshProUGUI* text = BeatSaberUI::CreateText(header->get_transform(), name);
-        // text->set_fontSize(text->get_fontSize() * 1.5f);
-        // text->set_alignment(TextAlignmentOptions::Center);
-
-        // auto containerGroup = BeatSaberUI::CreateHorizontalLayoutGroup(transform);
-        // containerGroup->get_rectTransform()->set_anchoredPosition({0.0f, 0.0f});
-        
-        // SetPreferredSize(containerGroup, 20, 80);
-
-        // auto bg = containerGroup->get_gameObject()->AddComponent<Backgroundable*>();
-        // bg->ApplyBackground(il2cpp_utils::newcsstr("panel-top"));
-        // bg->background->set_color(UnityEngine::Color(0.1f, 0.1f, 0.1f, 0.0f));
-
-        // return bg;
+        return CreateHeader(transform, name, {38.0f, 0.0f, 0.0f}, Color(0.1f, 0.1f, 0.1f, 0.2f), 100, 10);
     }
 
     HMUI::ModalView* CreateModal(Sprite* sprite, std::string desc, Transform* parent, std::string name, std::string buttonText, std::function<void(HMUI::ModalView*)> onClick) {

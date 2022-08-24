@@ -1,6 +1,7 @@
 #include "IFImage.hpp"
 
 #include "main.hpp"
+#include "Sprites.hpp"
 #include "Utils/FileUtils.hpp"
 #include "UnityEngine/Vector3.hpp"
 #include "UnityEngine/Rect.hpp"
@@ -20,7 +21,7 @@ namespace ImageFactory {
         image = BeatSaberUI::CreateImage(screen->get_transform(), sprite, {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
         UnityEngine::Object::DontDestroyOnLoad(screen);
         UnityEngine::Object::DontDestroyOnLoad(image);
-    
+
         screen->set_active(false);
 
         hasBeenCreated = true;
@@ -28,10 +29,6 @@ namespace ImageFactory {
 
     void IFImage::Spawn() {
         if (!enabled) return; 
-        if (!screen) {
-            Create();
-        }
-
         if (!screen) return;
 
         screen->set_active(true);
@@ -44,6 +41,11 @@ namespace ImageFactory {
     }
 
     void IFImage::Update(bool handle) {
+        if (!enabled) {
+            Despawn();
+            return;
+        }
+
         Vector3 oldPos = {x, y, z};
         Vector3 oldRot = {angleX, angleY, angleZ};
 
@@ -62,6 +64,27 @@ namespace ImageFactory {
 
         screen->SetActive(enabled);
         image->get_gameObject()->SetActive(enabled);
+    }
+
+    void IFImage::Destroy() {
+        hasBeenCreated = false;
+        Object::Destroy(screen);
+        Object::Destroy(image);
+    }
+
+    void IFImage::SetExtraData(StringW key, StringW val) {
+        if (extraData->contains(key)) {
+            extraData->erase(key);
+        }
+        extraData->insert({key, val});
+    }
+
+    std::string IFImage::GetExtraData(StringW key, StringW defaultVal) {
+    if (extraData->contains(key)) {
+        return static_cast<std::string>(extraData->at(key));
+    } else {
+        return static_cast<std::string>(defaultVal);
+    }
     }
 
     void IFImage::ctor(UnityEngine::Sprite* s, StringW p) {

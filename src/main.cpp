@@ -25,6 +25,11 @@ Logger& getLogger() {
 
 void ImageFactory::InstallHooks() {
     Hooks::LoadImagesHook();
+    Presenters::ComboHooks();
+    Presenters::PercentHooks();
+    Presenters::PresenterHooks();
+    Presenters::LastNoteHooks();
+    Presenters::ResultsHooks();
 }
 
 // Called at the early stages of game loading

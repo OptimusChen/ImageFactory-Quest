@@ -20,6 +20,7 @@ namespace StringUtils {
         return s;
     }
 
+    // Il2cppString Split no workey lmao
     std::vector<std::string> split(std::string s, char c) {
         std::vector<std::string> tokens;
         std::string token;

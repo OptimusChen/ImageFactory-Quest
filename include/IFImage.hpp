@@ -28,6 +28,7 @@ DECLARE_CLASS_CODEGEN(ImageFactory, IFImage, UnityEngine::MonoBehaviour,
     DECLARE_INSTANCE_METHOD(void, Spawn);
     DECLARE_INSTANCE_METHOD(void, Despawn);
     DECLARE_INSTANCE_METHOD(void, Update, bool); 
+    DECLARE_INSTANCE_METHOD(void, Destroy);
     DECLARE_INSTANCE_FIELD(float, width);
     DECLARE_INSTANCE_FIELD(float, height); 
     DECLARE_INSTANCE_FIELD(float, x);
@@ -56,5 +57,5 @@ DECLARE_CLASS_CODEGEN(ImageFactory, IFImage, UnityEngine::MonoBehaviour,
         std::string presentationoption; 
         bool enabled;
         void SetExtraData(StringW key, StringW val);
-        StringW GetExtraData(StringW key, StringW defaultVal);
+        std::string GetExtraData(StringW key, StringW defaultVal);
     )
