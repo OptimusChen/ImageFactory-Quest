@@ -6,6 +6,10 @@
 #include "UnityEngine/Vector3.hpp"
 #include "UnityEngine/Rect.hpp"
 #include "questui/shared/BeatSaberUI.hpp"
+#include "bsml/shared/Helpers/utilities.hpp"
+
+#include "gif-lib/shared/gif_lib.h"
+#include "EasyGifReader/EasyGifReader.h"
 
 using namespace UnityEngine;
 using namespace QuestUI;
@@ -21,6 +25,10 @@ namespace ImageFactory {
         image = BeatSaberUI::CreateImage(screen->get_transform(), sprite, {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
         UnityEngine::Object::DontDestroyOnLoad(screen);
         UnityEngine::Object::DontDestroyOnLoad(image);
+
+        if (FileUtils::isGifFile(path)) {
+            BSML::Utilities::SetImage(image, "file://" + path);
+        }
 
         screen->set_active(false);
 
@@ -61,6 +69,10 @@ namespace ImageFactory {
         image = BeatSaberUI::CreateImage(screen->get_transform(), sprite, {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
         Object::DontDestroyOnLoad(screen);
         Object::DontDestroyOnLoad(image);
+
+        if (FileUtils::isGifFile(path)) {
+            BSML::Utilities::SetImage(image, "file://" + path);
+        }
 
         screen->SetActive(enabled);
         image->get_gameObject()->SetActive(enabled);
@@ -106,6 +118,13 @@ namespace ImageFactory {
         fileName = FileUtils::GetFileName(p, false);
         path = static_cast<std::string>(p);
         extraData = new std::unordered_map<std::string, std::string>();
+
+        if (FileUtils::isGifFile(path)) {
+            auto gifReader = EasyGifReader::openFile(path.c_str());
+            
+            width = gifReader.width();
+            height = gifReader.height();  
+        }
 
         Create();
         Update(true);

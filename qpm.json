@@ -18,7 +18,7 @@
     },
     {
       "id": "beatsaber-hook",
-      "versionRange": "3.10.0",
+      "versionRange": "=3.10.0",
       "additionalData": {}
     },
     {
@@ -39,6 +39,11 @@
     {
       "id": "config-utils",
       "versionRange": "^0.8.0",
+      "additionalData": {}
+    },
+    {
+      "id": "bsml",
+      "versionRange": "^0.1.7",
       "additionalData": {}
     }
   ],

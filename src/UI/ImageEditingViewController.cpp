@@ -1,5 +1,6 @@
 #include "UI/ImageEditingViewController.hpp"
 
+#include "bsml/shared/Helpers/utilities.hpp"
 #include "UI/ImageFactoryFlowCoordinator.hpp"
 #include "Utils/UIUtils.hpp"
 #include "Utils/FileUtils.hpp"
@@ -119,6 +120,12 @@ namespace ImageFactory::UI {
 
                     auto image = BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite, {2.0f, 0.0f}, {10.0f, 2.0f});
 
+                    SetPreferredSize(image, 10.0f, 2.0f);
+
+                    if (FileUtils::isGifFile(configValue["path"].GetString())) {
+                        BSML::Utilities::SetImage(image, "file://" + static_cast<std::string>(configValue["path"].GetString()));
+                    }
+
                     LayoutElement* imgElem = image->GetComponent<LayoutElement*>();
                     imgElem->set_preferredHeight(2.0f);
                     imgElem->set_preferredWidth(10.0f);
@@ -208,6 +215,12 @@ namespace ImageFactory::UI {
 
         auto img = BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite, {2.0f, 0.0f}, {10.0f, 2.0f});
 
+        SetPreferredSize(img, 10.0f, 2.0f);
+
+        if (FileUtils::isGifFile(image->path)) {
+            BSML::Utilities::SetImage(img, "file://" + image->path);
+        }
+
         TMPro::TextMeshProUGUI* text = BeatSaberUI::CreateText(levelBarLayoutElement->get_transform(), image->name, true);
         if (!image->enabled) {
             text->set_color(Color(1.0f, 0.0f, 0.0f, 1.0f));
@@ -245,7 +258,5 @@ namespace ImageFactory::UI {
         editText->set_alignment(TMPro::TextAlignmentOptions::Center);
 
         levelBarLayout->get_gameObject()->set_active(true);
-
-        loadingControl->ShowText("", false);
     }
 }
