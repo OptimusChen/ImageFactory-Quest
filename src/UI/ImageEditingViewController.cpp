@@ -123,7 +123,7 @@ namespace ImageFactory::UI {
     }
 
     void ImageEditingViewController::Refresh(IFImage* image) {
-        CreateListElement(container->get_transform(), true, image, image->internalName)
+        CreateListElement(container->get_transform(), true, image, image->internalName);
     }
 
     void ImageEditingViewController::CreateListElement(UnityEngine::Transform* list, bool refresh, IFImage* ifimage, StringW fileName) {
@@ -136,6 +136,7 @@ namespace ImageFactory::UI {
             enabled = ifimage->enabled;
             name = ifimage->name;
         } else {
+            ConfigDocument& config = getPluginConfig().config->config;
             rapidjson::Value& configValue = config[static_cast<std::string>(fileName)];
 
             path = static_cast<std::string>(configValue["path"].GetString());
