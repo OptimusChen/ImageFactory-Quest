@@ -9,7 +9,7 @@
 #include "bsml/shared/Helpers/utilities.hpp"
 
 #include "gif-lib/shared/gif_lib.h"
-#include "EasyGifReader/EasyGifReader.h"
+#include "submodules/EasyGifReader/EasyGifReader.h"
 
 using namespace UnityEngine;
 using namespace QuestUI;
@@ -25,10 +25,6 @@ namespace ImageFactory {
         image = BeatSaberUI::CreateImage(screen->get_transform(), sprite, {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
         UnityEngine::Object::DontDestroyOnLoad(screen);
         UnityEngine::Object::DontDestroyOnLoad(image);
-
-        if (FileUtils::isGifFile(path)) {
-            BSML::Utilities::SetImage(image, "file://" + path);
-        }
 
         screen->set_active(false);
 
@@ -62,20 +58,22 @@ namespace ImageFactory {
             oldRot = screen->get_transform()->get_eulerAngles();
         }
 
-        Object::Destroy(screen);
-        Object::Destroy(image);
+        if (hasBeenCreated) {
+            Object::Destroy(screen);
+            Object::Destroy(image);
+        }
 
         screen = BeatSaberUI::CreateFloatingScreen({scaleX * (width / 3), scaleY * (height / 3)}, oldPos, oldRot, 0.0f, false, handle, 4);
         image = BeatSaberUI::CreateImage(screen->get_transform(), sprite, {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
         Object::DontDestroyOnLoad(screen);
         Object::DontDestroyOnLoad(image);
 
+        screen->SetActive(enabled);
+        image->get_gameObject()->SetActive(enabled);
+
         if (FileUtils::isGifFile(path)) {
             BSML::Utilities::SetImage(image, "file://" + path);
         }
-
-        screen->SetActive(enabled);
-        image->get_gameObject()->SetActive(enabled);
     }
 
     void IFImage::Destroy() {
@@ -124,6 +122,8 @@ namespace ImageFactory {
             
             width = gifReader.width();
             height = gifReader.height();  
+
+            sprite = BeatSaberUI::Base64ToSprite(Blank);
         }
 
         Create();

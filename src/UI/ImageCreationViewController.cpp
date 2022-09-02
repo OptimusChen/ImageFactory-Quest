@@ -2,6 +2,7 @@
 #include "UI/ImageFactoryFlowCoordinator.hpp"
 
 #include "bsml/shared/Helpers/utilities.hpp"
+#include "bsml/shared/BSML/Animations/AnimationStateUpdater.hpp"
 #include "Utils/UIUtils.hpp"
 #include "Utils/FileUtils.hpp"
 #include "Utils/StringUtils.hpp"
@@ -116,22 +117,30 @@ namespace ImageFactory::UI {
             levelBarLayoutElement->set_minHeight(10.0f);
             levelBarLayoutElement->set_minWidth(20.0f);
 
-            Sprite* sprite = BeatSaberUI::FileToSprite(image.c_str());
+            Sprite* sprite = BeatSaberUI::FileToSprite(image);
 
             auto img = BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite, Vector2(2.0f, 0.0f), Vector2(10.0f, 2.0f));
 
             SetPreferredSize(img, 10.0f, 2.0f);
 
-            if (FileUtils::isGifFile(image.c_str())) {
-                BSML::Utilities::SetImage(img, "file://" + static_cast<std::string>(image.c_str()));
+            if (FileUtils::isGifFile(image)) {
+                co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(1.0f)));
+                
+                BSML::Utilities::SetImage(img, "file://" + image);
+
+                while (!img->GetComponent<BSML::AnimationStateUpdater*>()->get_controllerData()) {
+                    co_yield nullptr;
+                }
+
+                co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(1.0f)));
             }
 
-            System::IO::FileStream* stream = System::IO::FileStream::New_ctor(image.c_str(), System::IO::FileMode::Open);
+            System::IO::FileStream* stream = System::IO::FileStream::New_ctor(image, System::IO::FileMode::Open);
 
-            long fileSize = FileUtils::GetFileSize(image.c_str(), stream);
+            long fileSize = FileUtils::GetFileSize(image, stream);
             auto loadTime = watch->get_ElapsedMilliseconds();
 
-            BeatSaberUI::CreateText(levelBarLayoutElement->get_transform(), FileUtils::GetFileName(image.c_str(), false), true);
+            BeatSaberUI::CreateText(levelBarLayoutElement->get_transform(), FileUtils::GetFileName(image, false), true);
            
             levelBarLayoutElement->set_minWidth(1.0f);
 
@@ -145,14 +154,14 @@ namespace ImageFactory::UI {
                     auto imgModal = BeatSaberUI::CreateImage(modal->get_transform(), sprite, Vector2(-18.0f, 8.0f),
                         Vector2(30.0f, 30.0f));
 
-                    if (FileUtils::isGifFile(image.c_str())) {
-                        BSML::Utilities::SetImage(imgModal, "file://" + static_cast<std::string>(image.c_str()));
+                    if (FileUtils::isGifFile(image)) {
+                        BSML::Utilities::SetImage(imgModal, "file://" + static_cast<std::string>(image));
                     }
 
                     auto anim = BeatSaberUI::CreateText(modal->get_transform(), "Animated: No",
                         Vector2(30.0f, 17.0f));
 
-                    if (FileUtils::isGifFile(image.c_str())) {
+                    if (FileUtils::isGifFile(image)) {
                         anim->SetText("Animated: Yes");
                     }
 
@@ -175,7 +184,7 @@ namespace ImageFactory::UI {
                             ImageFactoryFlowCoordinator* flow = ArrayUtil::First(Object::FindObjectsOfType<ImageFactoryFlowCoordinator*>());
 
                             if (flow) {
-                                flow->CreateImage(image.c_str());
+                                flow->CreateImage(image);
                             }
                             
                             getLogger().info("test 0.1");

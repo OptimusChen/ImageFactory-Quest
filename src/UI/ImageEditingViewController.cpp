@@ -1,6 +1,7 @@
 #include "UI/ImageEditingViewController.hpp"
 
 #include "bsml/shared/Helpers/utilities.hpp"
+#include "bsml/shared/BSML/Animations/AnimationStateUpdater.hpp"
 #include "UI/ImageFactoryFlowCoordinator.hpp"
 #include "Utils/UIUtils.hpp"
 #include "Utils/FileUtils.hpp"
@@ -95,99 +96,21 @@ namespace ImageFactory::UI {
 
         loadingControl->loadingText->set_text("Loading Images... (0/" + std::to_string(split.size()) + ")");
 
-        getLogger().info("Images: %s", static_cast<std::string>(s).c_str());
-
-        for (int j = 0; j < split.size(); j++) {
-            getLogger().info("Split: %s", static_cast<std::string>(split[j]).c_str());
-        }
-
-        getLogger().info("Length: %lu", split.size());
-
         while (!(i == split.size())) {
             StringW fileName = split.at(i);
 
             if (fileName->get_Length() != 0) {
-                HorizontalLayoutGroup* levelBarLayout = BeatSaberUI::CreateHorizontalLayoutGroup(list);
-                levelBarLayout->set_childControlWidth(false);
-
-                LayoutElement* levelBarLayoutElement = levelBarLayout->GetComponent<LayoutElement*>();
-                levelBarLayoutElement->set_minHeight(10.0f);
-                levelBarLayoutElement->set_minWidth(20.0f);
-
-                if (config.HasMember(fileName)) {
-                    rapidjson::Value& configValue = config[static_cast<std::string>(fileName)];
-                    Sprite* sprite = BeatSaberUI::FileToSprite(configValue["path"].GetString());
-
-                    auto image = BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite, {2.0f, 0.0f}, {10.0f, 2.0f});
-
-                    SetPreferredSize(image, 10.0f, 2.0f);
-
-                    if (FileUtils::isGifFile(configValue["path"].GetString())) {
-                        BSML::Utilities::SetImage(image, "file://" + static_cast<std::string>(configValue["path"].GetString()));
-                    }
-
-                    LayoutElement* imgElem = image->GetComponent<LayoutElement*>();
-                    imgElem->set_preferredHeight(2.0f);
-                    imgElem->set_preferredWidth(10.0f);
-
-                    TMPro::TextMeshProUGUI* text = BeatSaberUI::CreateText(levelBarLayoutElement->get_transform(), configValue["name"].GetString(), true);
-                    if (!configValue["enabled"].GetBool()) {
-                        text->set_color(Color(1.0f, 0.0f, 0.0f, 1.0f));
-                    } else {
-                        text->set_color(Color(0.0f, 1.0f, 0.0f, 1.0f));
-                    }
-
-                    levelBarLayoutElement->set_minWidth(1.0f);
-                    levelBarLayoutElement->set_minHeight(1.0f);
-
-                    Button* deleteButton = BeatSaberUI::CreateUIButton(levelBarLayoutElement->get_transform(), "", {0.0f, 0.0f}, {12.0f, 9.0f}, 
-                        [=]() {
-                            for (std::pair<IFImage*, std::string> pair : *PresenterManager::MAP) {
-                                if (pair.first->internalName.starts_with(fileName)) {
-                                    Config::Delete(pair.first);
-                                    levelBarLayout->get_gameObject()->set_active(false);
-                                }
-                            }
-                        });
-
-                    auto deleteText = BeatSaberUI::CreateText(
-                        deleteButton->get_transform(), "X");
-                    deleteText->set_alignment(TMPro::TextAlignmentOptions::Center);
-                    deleteText->set_color(Color(1.0f, 0.0f, 0.0f, 1.0f));
-
-                    Button* editButton = BeatSaberUI::CreateUIButton(levelBarLayoutElement->get_transform(), "", {0.0f, 0.0f}, {12.0f, 9.0f}, 
-                        [=]() {
-                            for (std::pair<IFImage*, std::string> pair : *PresenterManager::MAP) {
-                                if (pair.first->internalName.starts_with(fileName)) {
-                                    ArrayUtil::First(Resources::FindObjectsOfTypeAll<ImageFactoryFlowCoordinator*>())->EditImage(pair.first);
-                                }
-                            }
-                        });
-                    auto editText = BeatSaberUI::CreateText(editButton->get_transform(), "<-");
-                    editText->set_alignment(TMPro::TextAlignmentOptions::Center);
-
-                    levelBarLayout->get_gameObject()->set_active(true);
-                }
+                CreateListElement(list, false, nullptr, fileName);
             }
 
             i++;
 
-            getLogger().info("Eye: %d", i);
-
             loadingControl->loadingText->set_text("Loading Images... (" + std::to_string(i - 1) + "/" + std::to_string(split.size() - 1) + ")");
 
-            getLogger().info("Test 1");
-
             co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.4f)));
-
-            getLogger().info("Test 2");
         }
 
-        getLogger().info("Test 3");
-
         co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.15f)));
-
-        getLogger().info("Test 4");
 
         if (i == 0) {   
             loadingControl->refreshText->get_gameObject()->SetActive(true);
@@ -196,36 +119,52 @@ namespace ImageFactory::UI {
             loadingControl->Hide();
         }
 
-        getLogger().info("Test 5");
-
         list->get_gameObject()->SetActive(true);
-        
-        getLogger().info("Test 6");
     }
 
     void ImageEditingViewController::Refresh(IFImage* image) {
-        HorizontalLayoutGroup* levelBarLayout = BeatSaberUI::CreateHorizontalLayoutGroup(container->get_transform());
+        CreateListElement(container->get_transform(), true, image, image->internalName)
+    }
+
+    void ImageEditingViewController::CreateListElement(UnityEngine::Transform* list, bool refresh, IFImage* ifimage, StringW fileName) {
+        std::string path;
+        std::string name;
+        bool enabled;
+
+        if (ifimage && refresh) {
+            path = ifimage->path;
+            enabled = ifimage->enabled;
+            name = ifimage->name;
+        } else {
+            rapidjson::Value& configValue = config[static_cast<std::string>(fileName)];
+
+            path = static_cast<std::string>(configValue["path"].GetString());
+            name = static_cast<std::string>(configValue["name"].GetString());
+            enabled = configValue["enabled"].GetBool();
+        }
+
+        HorizontalLayoutGroup* levelBarLayout = BeatSaberUI::CreateHorizontalLayoutGroup(list);
         levelBarLayout->set_childControlWidth(false);
 
         LayoutElement* levelBarLayoutElement = levelBarLayout->GetComponent<LayoutElement*>();
         levelBarLayoutElement->set_minHeight(10.0f);
         levelBarLayoutElement->set_minWidth(20.0f);
 
-        Sprite* sprite = BeatSaberUI::FileToSprite(image->path);
+        Sprite* sprite = BeatSaberUI::FileToSprite(path);
 
-        auto img = BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite, {2.0f, 0.0f}, {10.0f, 2.0f});
+        auto image = BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite, {2.0f, 0.0f}, {10.0f, 2.0f});
 
-        SetPreferredSize(img, 10.0f, 2.0f);
+        SetPreferredSize(image, 10.0f, 2.0f);
 
-        if (FileUtils::isGifFile(image->path)) {
-            BSML::Utilities::SetImage(img, "file://" + image->path);
-        }
+        LayoutElement* imgElem = image->GetComponent<LayoutElement*>();
+        imgElem->set_preferredHeight(2.0f);
+        imgElem->set_preferredWidth(10.0f);
 
-        TMPro::TextMeshProUGUI* text = BeatSaberUI::CreateText(levelBarLayoutElement->get_transform(), image->name, true);
-        if (!image->enabled) {
-            text->set_color(Color(1.0f, 0.0f, 0.0f, 1.0f));
+        TMPro::TextMeshProUGUI* text = BeatSaberUI::CreateText(levelBarLayoutElement->get_transform(), name, true);
+        if (!enabled) {
+            text->set_color(Color::get_red());
         } else {
-            text->set_color(Color(0.0f, 1.0f, 0.0f, 1.0f));
+            text->set_color(Color::get_green());
         }
 
         levelBarLayoutElement->set_minWidth(1.0f);
@@ -234,9 +173,10 @@ namespace ImageFactory::UI {
         Button* deleteButton = BeatSaberUI::CreateUIButton(levelBarLayoutElement->get_transform(), "", {0.0f, 0.0f}, {12.0f, 9.0f}, 
             [=]() {
                 for (std::pair<IFImage*, std::string> pair : *PresenterManager::MAP) {
-                    if (pair.first->internalName.starts_with(image->internalName)) {
+                    if (pair.first->internalName.starts_with(fileName)) {
                         Config::Delete(pair.first);
                         levelBarLayout->get_gameObject()->set_active(false);
+                        break;
                     }
                 }
             });
@@ -249,14 +189,20 @@ namespace ImageFactory::UI {
         Button* editButton = BeatSaberUI::CreateUIButton(levelBarLayoutElement->get_transform(), "", {0.0f, 0.0f}, {12.0f, 9.0f}, 
             [=]() {
                 for (std::pair<IFImage*, std::string> pair : *PresenterManager::MAP) {
-                    if (pair.first->internalName.starts_with(image->internalName)) {
+                    if (pair.first->internalName.starts_with(fileName)) {
                         ArrayUtil::First(Resources::FindObjectsOfTypeAll<ImageFactoryFlowCoordinator*>())->EditImage(pair.first);
+                        break;
                     }
                 }
             });
+
         auto editText = BeatSaberUI::CreateText(editButton->get_transform(), "<-");
         editText->set_alignment(TMPro::TextAlignmentOptions::Center);
 
         levelBarLayout->get_gameObject()->set_active(true);
+
+        if (FileUtils::isGifFile(path)) {
+            BSML::Utilities::SetImage(image, "file://" + path);
+        }
     }
 }

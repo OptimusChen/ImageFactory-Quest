@@ -131,6 +131,8 @@ namespace ImageFactory::UI {
                     flow->ResetViews();
 
                     if (editing) {
+                        image->Despawn();
+                        backUpImage->Spawn();
                         PresenterManager::ClearInfo(image);
                         PresenterManager::Parse(backUpImage, backUpImage->presentationoption);
                         PresenterManager::SpawnInMenu();

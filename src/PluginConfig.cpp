@@ -1,11 +1,13 @@
 #include "../include/PluginConfig.hpp"
 
+#include "bsml/shared/BSML/Animations/AnimationStateUpdater.hpp"
 #include "Presenters/PresenterManager.hpp"
 #include "UnityEngine/WaitForSeconds.hpp"
 #include "UnityEngine/GameObject.hpp"
 #include "Utils/StringUtils.hpp"
 #include "Utils/FileUtils.hpp"
 #include "IFImage.hpp"
+#include "Sprites.hpp"
 
 DEFINE_CONFIG(PluginConfig);
 
@@ -131,8 +133,8 @@ namespace ImageFactory {
                     IFImage* image = obj->AddComponent<IFImage*>();
                     getLogger().info("Test 7");
 
-                    image->ctor(BeatSaberUI::FileToSprite(configValue["path"].GetString()), configValue["path"].GetString());
-
+                    image->path = configValue["path"].GetString();
+                    image->sprite = BeatSaberUI::FileToSprite(image->path);
                     image->internalName = fileName;
                     image->x = configValue["x"].GetFloat();
                     image->y = configValue["y"].GetFloat();
@@ -168,10 +170,16 @@ namespace ImageFactory {
                     image->fileName = FileUtils::GetFileName(image->path, false);
                     PresenterManager::Parse(image, image->presentationoption);
 
-                    image->Destroy();
+                    if (FileUtils::isGifFile(image->path)) {
+                        image->sprite = BeatSaberUI::Base64ToSprite(Blank);
+                    }
+
                     image->Create();
                     image->Update(false);
-                    image->Despawn();
+
+                    while (!image->image->GetComponent<BSML::AnimationStateUpdater*>()->get_controllerData()) {
+                        co_yield nullptr;
+                    }
                 }
             }
 

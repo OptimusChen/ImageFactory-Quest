@@ -15,6 +15,7 @@ DECLARE_CLASS_CODEGEN(ImageFactory::UI, ImageEditingViewController, HMUI::ViewCo
     DECLARE_INSTANCE_FIELD(UnityEngine::Transform*, containerParent);
     DECLARE_INSTANCE_FIELD(UnityEngine::GameObject*, container);
     DECLARE_INSTANCE_METHOD(void, Refresh, IFImage*);
+    DECLARE_INSTANCE_METHOD(void, CreateListElement, UnityEngine::Transform*, bool, IFImage*, StringW);
 
     private:
         custom_types::Helpers::Coroutine SetupListElements(UnityEngine::Transform* parent);

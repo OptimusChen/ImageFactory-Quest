@@ -40,21 +40,21 @@ std::string FileUtils::GetFileName(std::string path, bool removeExtension) {
   ;
 }
 
-bool FileUtils::isImageFile(std::string path) {
+bool FileUtils::isImageFile(std::string_view path) {
   if (path.ends_with(".png") || path.ends_with(".jpg")) {
     return true;
   }
   return false;
 }
 
-bool FileUtils::isGifFile(std::string path) {
+bool FileUtils::isGifFile(std::string_view path) {
   if (path.ends_with(".gif")) {
     return true;
   }
   return false;
 }
 
-bool FileUtils::isJsonFile(std::string path) {
+bool FileUtils::isJsonFile(std::string_view path) {
   if (path.ends_with(".json")) {
     return true;
   }
@@ -77,6 +77,6 @@ int FileUtils::FileSizeDivisor(long size) {
     return 1;
 }
 
-long FileUtils::GetFileSize(std::string filename, System::IO::FileStream* stream) {
+long FileUtils::GetFileSize(std::string_view filename, System::IO::FileStream* stream) {
   return stream->get_Length();
 }
