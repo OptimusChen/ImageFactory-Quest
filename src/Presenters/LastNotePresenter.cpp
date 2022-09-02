@@ -9,6 +9,7 @@
 #include "GlobalNamespace/IPreviewBeatmapLevel.hpp"
 #include "GlobalNamespace/BeatmapData.hpp"
 #include "GlobalNamespace/BeatmapDataItem.hpp"
+#include "GlobalNamespace/NoteData.hpp"
 #include "System/Threading/Tasks/Task_1.hpp"
 #include "System/Collections/Generic/LinkedList_1.hpp"
 #include "GlobalNamespace/NoteController.hpp"
@@ -41,8 +42,10 @@ namespace ImageFactory::Presenters {
         while (!task->get_IsCompleted()) co_yield nullptr;
 
         auto data = task->get_ResultOnSuccess();
+        auto list = List<NoteData*>::New_ctor();
+        list->AddRange(data->GetBeatmapDataItems<NoteData*>());
         
-        callback(data->get_allBeatmapDataItems()->get_Count());
+        callback(list->get_Count());
     }
 
     int noteCount = 0;

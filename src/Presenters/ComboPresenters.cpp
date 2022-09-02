@@ -100,6 +100,9 @@ namespace ImageFactory::Presenters {
         self->add_comboDidChangeEvent(custom_types::MakeDelegate<System::Action_1<int>*>(std::function([=](int combo){
             for (std::pair<IFImage*, StringW> pair : *PresenterManager::MAP) {
                 IFImage* image = pair.first;
+                getLogger().info("Image: %p", image);
+                getLogger().info("Extra Data: %s", image->GetExtraData("combo_inc_combo", "100").c_str());
+                getLogger().info("Pres: %s", static_cast<std::string>(pair.second).c_str());
 
                 if (pair.second.starts_with(PresenterManager::COMBO) &&
                     combo == stoi(pair.first->GetExtraData("combo_combo", "100"))) {

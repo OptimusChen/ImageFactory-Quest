@@ -5,6 +5,10 @@
 #include "GlobalNamespace/SharedCoroutineStarter.hpp"
 #include "PluginConfig.hpp"
 
+#include "bsml/shared/Helpers/utilities.hpp"
+#include "questui/shared/BeatSaberUI.hpp"
+#include "Sprites.hpp"
+
 using namespace ImageFactory;
 using namespace UnityEngine;
 using namespace GlobalNamespace;

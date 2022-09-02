@@ -149,6 +149,7 @@ namespace ImageFactory {
                     image->name = configValue["name"].GetString();
                     image->presentationoption = configValue["presentationOption"].GetString();
                     image->enabled = configValue["enabled"].GetBool();
+                    image->extraData = new std::unordered_map<std::string, std::string>();
 
                     StringW extraData = configValue["extraData"].GetString();
 
@@ -176,10 +177,6 @@ namespace ImageFactory {
 
                     image->Create();
                     image->Update(false);
-
-                    while (!image->image->GetComponent<BSML::AnimationStateUpdater*>()->get_controllerData()) {
-                        co_yield nullptr;
-                    }
                 }
             }
 

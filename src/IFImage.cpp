@@ -89,12 +89,12 @@ namespace ImageFactory {
         extraData->insert({key, val});
     }
 
-    std::string IFImage::GetExtraData(StringW key, StringW defaultVal) {
-    if (extraData->contains(key)) {
-        return static_cast<std::string>(extraData->at(key));
-    } else {
-        return static_cast<std::string>(defaultVal);
-    }
+    std::string IFImage::GetExtraData(std::string key, std::string defaultVal) {
+        if (extraData->contains(key)) {
+            return extraData->at(key);
+        } else {
+            return defaultVal;
+        }
     }
 
     void IFImage::ctor(UnityEngine::Sprite* s, StringW p) {

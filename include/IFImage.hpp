@@ -57,5 +57,5 @@ DECLARE_CLASS_CODEGEN(ImageFactory, IFImage, UnityEngine::MonoBehaviour,
         std::string presentationoption; 
         bool enabled;
         void SetExtraData(StringW key, StringW val);
-        std::string GetExtraData(StringW key, StringW defaultVal);
+        std::string GetExtraData(std::string key, std::string defaultVal);
     )
