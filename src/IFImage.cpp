@@ -6,10 +6,10 @@
 #include "UnityEngine/Vector3.hpp"
 #include "UnityEngine/Rect.hpp"
 #include "questui/shared/BeatSaberUI.hpp"
-#include "bsml/shared/Helpers/utilities.hpp"
+#include "Helpers/utilities.hpp"
 
 #include "gif-lib/shared/gif_lib.h"
-#include "submodules/EasyGifReader/EasyGifReader.h"
+#include "EasyGifReader.h"
 
 using namespace UnityEngine;
 using namespace QuestUI;

@@ -5,7 +5,7 @@
 #include "GlobalNamespace/SharedCoroutineStarter.hpp"
 #include "PluginConfig.hpp"
 
-#include "bsml/shared/Helpers/utilities.hpp"
+#include "Helpers/utilities.hpp"
 #include "questui/shared/BeatSaberUI.hpp"
 #include "Sprites.hpp"
 
@@ -19,7 +19,6 @@ MAKE_HOOK_MATCH(MainMenuViewController_DidActivate, &GlobalNamespace::MainMenuVi
     MainMenuViewController_DidActivate(self, firstActivation, addedToHierarchy, screenSystemEnabling);
 
     if (firstActivation) {
-        getLogger().info("yes");
         StartCoroutine(Config::LoadImages());
     }
 }

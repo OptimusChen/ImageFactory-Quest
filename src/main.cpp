@@ -5,6 +5,7 @@
 #include "questui/shared/BeatSaberUI.hpp"
 #include "beatsaber-hook/shared/utils/hooking.hpp"
 #include "UI/ImageFactoryFlowCoordinator.hpp"
+#include "paper/shared/logger.hpp"
 
 using namespace ImageFactory;
 
@@ -34,7 +35,7 @@ void ImageFactory::InstallHooks() {
 
 // Called at the early stages of game loading
 extern "C" void setup(ModInfo& info) {
-    info.id = ID;
+    info.id = MOD_ID;
     info.version = VERSION;
     modInfo = info;
 	

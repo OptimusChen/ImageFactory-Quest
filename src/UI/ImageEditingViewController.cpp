@@ -1,7 +1,7 @@
 #include "UI/ImageEditingViewController.hpp"
 
-#include "bsml/shared/Helpers/utilities.hpp"
-#include "bsml/shared/BSML/Animations/AnimationStateUpdater.hpp"
+#include "Helpers/utilities.hpp"
+#include "BSML/Animations/AnimationStateUpdater.hpp"
 #include "UI/ImageFactoryFlowCoordinator.hpp"
 #include "Utils/UIUtils.hpp"
 #include "Utils/FileUtils.hpp"
@@ -20,6 +20,7 @@
 #include "HMUI/ViewController_AnimationDirection.hpp"
 #include "HMUI/ViewController_AnimationType.hpp"
 #include "PluginConfig.hpp"
+#include "Sprites.hpp"
 #include "main.hpp"
 
 DEFINE_TYPE(ImageFactory::UI, ImageEditingViewController);
@@ -157,6 +158,11 @@ namespace ImageFactory::UI {
 
         SetPreferredSize(image, 10.0f, 2.0f);
 
+        if (FileUtils::isGifFile(path)) {
+            image->set_sprite(BeatSaberUI::Base64ToSprite(Blank));
+            BSML::Utilities::SetImage(image, "file://" + path);
+        }
+
         LayoutElement* imgElem = image->GetComponent<LayoutElement*>();
         imgElem->set_preferredHeight(2.0f);
         imgElem->set_preferredWidth(10.0f);
@@ -201,9 +207,5 @@ namespace ImageFactory::UI {
         editText->set_alignment(TMPro::TextAlignmentOptions::Center);
 
         levelBarLayout->get_gameObject()->set_active(true);
-
-        if (FileUtils::isGifFile(path)) {
-            BSML::Utilities::SetImage(image, "file://" + path);
-        }
     }
 }

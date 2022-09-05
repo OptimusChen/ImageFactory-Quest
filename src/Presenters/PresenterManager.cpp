@@ -45,16 +45,11 @@ namespace ImageFactory {
     }
 
     void PresenterManager::SpawnInMenu() {
-        getLogger().info("Pres test 1");
         for (std::pair<IFImage*, StringW> pair : *MAP) {
-            getLogger().info("Pres test 2");
             if (pair.second.starts_with(EVERYWHERE) ||
                 pair.second.starts_with(IN_MENU)) {
-                getLogger().info("Pres test 3");
                 if (!pair.first) return;
-                getLogger().info("Pres test 4");
                 pair.first->Spawn();
-                getLogger().info("Pres test 5");
             } else {
                 if (!pair.first) return;
                 pair.first->Despawn();
@@ -139,7 +134,6 @@ namespace ImageFactory {
             return new Presenters::ResultsScreenPresenter();
         }
 
-        getLogger().info("Nothing found... %s", pres.c_str());
         return new Presenters::Presenter();
     }
 }

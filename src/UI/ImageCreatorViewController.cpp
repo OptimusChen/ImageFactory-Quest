@@ -119,7 +119,6 @@ namespace ImageFactory::UI {
 
                     ResetOptions(list->get_transform());
 
-                    getLogger().info("Pres Opt %s", image->presentationoption.c_str());
                 });
 
             options = PresenterManager::GetPresenter(image->presentationoption)->GetUIElements(list->get_transform(), image);
@@ -151,10 +150,6 @@ namespace ImageFactory::UI {
                     image->angleX = screen->get_transform()->get_rotation().get_eulerAngles().x;
                     image->angleY = screen->get_transform()->get_rotation().get_eulerAngles().y;
                     image->angleZ = screen->get_transform()->get_rotation().get_eulerAngles().z;
-
-                    getLogger().info("Name %s", static_cast<std::string>(image->name).c_str());
-                    getLogger().info("Pres Opt %s", static_cast<std::string>(image->presentationoption).c_str());
-                    getLogger().info("Path %s", static_cast<std::string>(image->path).c_str());
 
                     if (editing) {
                         Config::Update(image);

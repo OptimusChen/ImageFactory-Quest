@@ -1,6 +1,6 @@
 #include "../include/PluginConfig.hpp"
 
-#include "bsml/shared/BSML/Animations/AnimationStateUpdater.hpp"
+#include "BSML/Animations/AnimationStateUpdater.hpp"
 #include "Presenters/PresenterManager.hpp"
 #include "UnityEngine/WaitForSeconds.hpp"
 #include "UnityEngine/GameObject.hpp"
@@ -123,15 +123,11 @@ namespace ImageFactory {
 
         for (int i = 0; i < split.size(); i++) {
             StringW fileName = split.at(i);
-            getLogger().info("Test 4 %s", static_cast<std::string>(fileName).c_str());
 
             if (fileName->get_Length() != 0) {  
-                getLogger().info("Test 5");
                 if (config.HasMember(fileName)) {
-                    getLogger().info("Test 6");
                     rapidjson::Value& configValue = config[static_cast<std::string>(fileName)];
                     IFImage* image = obj->AddComponent<IFImage*>();
-                    getLogger().info("Test 7");
 
                     image->path = configValue["path"].GetString();
                     image->sprite = BeatSaberUI::FileToSprite(image->path);
@@ -177,6 +173,7 @@ namespace ImageFactory {
 
                     image->Create();
                     image->Update(false);
+                    image->Despawn();
                 }
             }
 

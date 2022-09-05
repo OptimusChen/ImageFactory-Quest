@@ -1,8 +1,8 @@
 #include "UI/ImageCreationViewController.hpp"
 #include "UI/ImageFactoryFlowCoordinator.hpp"
 
-#include "bsml/shared/Helpers/utilities.hpp"
-#include "bsml/shared/BSML/Animations/AnimationStateUpdater.hpp"
+#include "Helpers/utilities.hpp"
+#include "BSML/Animations/AnimationStateUpdater.hpp"
 #include "Utils/UIUtils.hpp"
 #include "Utils/FileUtils.hpp"
 #include "Utils/StringUtils.hpp"
@@ -18,6 +18,7 @@
 #include "GlobalNamespace/SharedCoroutineStarter.hpp"
 #include "custom-types/shared/delegate.hpp"
 #include "HMUI/ImageView.hpp"
+#include "Sprites.hpp"
 #include "main.hpp"
 
 DEFINE_TYPE(ImageFactory::UI, ImageCreationViewController);
@@ -124,15 +125,7 @@ namespace ImageFactory::UI {
             SetPreferredSize(img, 10.0f, 2.0f);
 
             if (FileUtils::isGifFile(image)) {
-                co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(1.0f)));
-                
                 BSML::Utilities::SetImage(img, "file://" + image);
-
-                while (!img->GetComponent<BSML::AnimationStateUpdater*>()->get_controllerData()) {
-                    co_yield nullptr;
-                }
-
-                co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(1.0f)));
             }
 
             System::IO::FileStream* stream = System::IO::FileStream::New_ctor(image, System::IO::FileMode::Open);
@@ -180,14 +173,11 @@ namespace ImageFactory::UI {
                     
                     BeatSaberUI::CreateUIButton(modal->get_transform(), "CREATE", Vector2(14.0f, -17.0f),
                         Vector2(30.0f, 10.0f), [=]() { 
-                            getLogger().info("test 0");
                             ImageFactoryFlowCoordinator* flow = ArrayUtil::First(Object::FindObjectsOfType<ImageFactoryFlowCoordinator*>());
 
                             if (flow) {
                                 flow->CreateImage(image);
                             }
-                            
-                            getLogger().info("test 0.1");
                         });
 
                     BeatSaberUI::CreateUIButton(modal->get_transform(), "CANCEL", Vector2(-18.0f, -17.0f),
