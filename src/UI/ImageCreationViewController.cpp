@@ -16,6 +16,7 @@
 #include "UnityEngine/Resources.hpp"
 #include "UnityEngine/WaitForSeconds.hpp"
 #include "GlobalNamespace/SharedCoroutineStarter.hpp"
+#include "questui/shared/CustomTypes/Components/MainThreadScheduler.hpp"
 #include "custom-types/shared/delegate.hpp"
 #include "HMUI/ImageView.hpp"
 #include "Sprites.hpp"
@@ -71,34 +72,34 @@ namespace ImageFactory::UI {
     custom_types::Helpers::Coroutine ImageCreationViewController::SetupListElements(Transform* list){
         std::vector<std::string> images = FileUtils::getFiles("/sdcard/ModData/com.beatgames.beatsaber/Mods/ImageFactory/Images/");
 
-        if (loadingControl) {
-            loadingControl->refreshButton->get_gameObject()->SetActive(false);
-            loadingControl->refreshText->get_gameObject()->SetActive(false);
-        }
+        // if (loadingControl) {
+        //     loadingControl->refreshButton->get_gameObject()->SetActive(false);
+        //     loadingControl->refreshText->get_gameObject()->SetActive(false);
+        // }
         
-        GameObject::Destroy(loadingControl);
+        // GameObject::Destroy(loadingControl);
         
-        GameObject* existingLoadinControl = Resources::FindObjectsOfTypeAll<LoadingControl*>()->values[0]->get_gameObject();
-        GameObject* loadinControlGameObject = UnityEngine::GameObject::Instantiate(existingLoadinControl, get_transform());
+        // GameObject* existingLoadinControl = Resources::FindObjectsOfTypeAll<LoadingControl*>()->values[0]->get_gameObject();
+        // GameObject* loadinControlGameObject = UnityEngine::GameObject::Instantiate(existingLoadinControl, get_transform());
 
-        auto loadingControlTransform = loadinControlGameObject->get_transform();
-        loadingControl = loadinControlGameObject->GetComponent<LoadingControl*>();
-        loadingControl->get_gameObject()->SetActive(true);
-        loadingControl->set_enabled(true);
+        // auto loadingControlTransform = loadinControlGameObject->get_transform();
+        // loadingControl = loadinControlGameObject->GetComponent<LoadingControl*>();
+        // loadingControl->get_gameObject()->SetActive(true);
+        // loadingControl->set_enabled(true);
 
-        loadingControl->add_didPressRefreshButtonEvent(
-            custom_types::MakeDelegate<System::Action*>(
-                (std::function<void()>)[this, list]() {
-                    StartCoroutine(this->SetupListElements(list));
-                }));
+        // loadingControl->add_didPressRefreshButtonEvent(
+        //     custom_types::MakeDelegate<System::Action*>(
+        //         (std::function<void()>)[this, list]() {
+        //             StartCoroutine(this->SetupListElements(list));
+        //         }));
 
-        ConstString load = "Loading Images...";
+        // ConstString load = "Loading Images...";
 
-        loadingControl->refreshText->set_text(load);
-        loadingControl->loadingText->set_text(load);
-        loadingControl->ShowLoading(load);
+        // loadingControl->refreshText->set_text(load);
+        // loadingControl->loadingText->set_text(load);
+        // loadingControl->ShowLoading(load);
 
-        list->get_gameObject()->set_active(false);
+        // list->get_gameObject()->set_active(false);
 
         Diagnostics::Stopwatch* watch = Diagnostics::Stopwatch::New_ctor();
 
@@ -126,6 +127,10 @@ namespace ImageFactory::UI {
 
             if (FileUtils::isGifFile(image)) {
                 BSML::Utilities::SetImage(img, "file://" + image);
+
+                while (!img->GetComponent<BSML::AnimationStateUpdater*>()->get_controllerData()) {
+                    co_yield nullptr;
+                }
             }
 
             System::IO::FileStream* stream = System::IO::FileStream::New_ctor(image, System::IO::FileMode::Open);
@@ -148,7 +153,7 @@ namespace ImageFactory::UI {
                         Vector2(30.0f, 30.0f));
 
                     if (FileUtils::isGifFile(image)) {
-                        BSML::Utilities::SetImage(imgModal, "file://" + static_cast<std::string>(image));
+                        BSML::Utilities::SetImage(imgModal, "file://" + image);
                     }
 
                     auto anim = BeatSaberUI::CreateText(modal->get_transform(), "Animated: No",
@@ -192,21 +197,21 @@ namespace ImageFactory::UI {
 
             co_yield reinterpret_cast<Collections::IEnumerator*>( CRASH_UNLESS(WaitForSeconds::New_ctor(0.05)));
 
-            loadingControl->loadingText->set_text("Loading Images... (" + std::to_string(i) + "/" + std::to_string(images.size()) + ")");
+            // loadingControl->loadingText->set_text("Loading Images... (" + std::to_string(i) + "/" + std::to_string(images.size()) + ")");
         }
 
         watch->Stop();
 
         co_yield reinterpret_cast<Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.5f)));
         
-        list->get_gameObject()->set_active(true);
+        // list->get_gameObject()->set_active(true);
 
-        if (i == 0) {
-            loadingControl->refreshText->get_gameObject()->SetActive(true);
-            loadingControl->ShowText("No images found in folder!\n/sdCard/ModData/com.beatgames/Mods/ImageFactory/Images/", true);
-        } else {
-            loadingControl->Hide();
-        }
+        // if (i == 0) {
+        //     loadingControl->refreshText->get_gameObject()->SetActive(true);
+        //     loadingControl->ShowText("No images found in folder!\n/sdCard/ModData/com.beatgames/Mods/ImageFactory/Images/", true);
+        // } else {
+        //     loadingControl->Hide();
+        // }
 
         co_return;
     }
