@@ -47,7 +47,7 @@ if ($all -eq $false) {
 }
 
 if ($self -eq $true) {
-    $command += " | Select-String -pattern `"(imagefactory|AndroidRuntime|CRASH)`""
+    $command += " | Select-String -pattern `"(ImageFactory|AndroidRuntime|CRASH)`""
 } elseif ($custom -ne "") {
     $pattern = "(" + $custom + "|AndriodRuntime|CRASH)"
     $command += " | Select-String -pattern `"$pattern`""

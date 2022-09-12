@@ -278,7 +278,6 @@ namespace BSML::Utilities {
                             auto controllerData = animationController->Register(path, tex, uvs, delays);
                             stateUpdater->set_controllerData(controllerData);
                             if (onFinished) onFinished();
-                            DEBUG("DONE");
                         }
                     );
                 };

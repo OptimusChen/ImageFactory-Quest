@@ -6,6 +6,7 @@
 #include "UnityEngine/Sprite.hpp"
 #include "UnityEngine/Transform.hpp"
 #include "UnityEngine/UI/Button.hpp"
+#include "UnityEngine/Sprite.hpp"
 #include "UnityEngine/UI/HorizontalLayoutGroup.hpp"
 #include "HMUI/ModalView.hpp"
 #include <string_view>
@@ -17,4 +18,5 @@ namespace UIUtils {
     Backgroundable* CreateHeader(Transform* parent, std::string name);
     Backgroundable* CreateHeader(Transform* parent, std::string name, Vector3 localPos, Color color, int width, int height);
     HMUI::ModalView* CreateModal(Sprite* sprite, std::string desc, Transform* parent, std::string name, std::string buttonText, std::function<void(HMUI::ModalView*)> onClick);
+    Sprite* FirstFrame(std::string path);
 }

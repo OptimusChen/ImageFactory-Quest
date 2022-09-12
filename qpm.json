@@ -3,11 +3,11 @@
   "dependenciesDir": "extern",
   "info": {
     "name": "ImageFactory",
-    "id": "imagefactory",
+    "id": "ImageFactory",
     "version": "0.1.0",
     "url": null,
     "additionalData": {
-      "overrideSoName": "libimagefactory.so"
+      "overrideSoName": "libImageFactory.so"
     }
   },
   "dependencies": [

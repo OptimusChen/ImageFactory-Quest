@@ -12,7 +12,6 @@
 #include "System/IO/File.hpp"
 
 #include "Helpers/delegates.hpp"
-#include "Helpers/utilities.hpp"
 
 #include "GlobalNamespace/SharedCoroutineStarter.hpp"
 #include "System/Func_1.hpp"
@@ -37,14 +36,14 @@ namespace BSML {
                     [sharedStarter, onProcessed](AnimationInfo* animationInfo){ 
                         DEBUG("Processed Data, processing animation info");
                         if (animationInfo == nullptr) {
-                            ERROR("animation info null");
                             onProcessed(nullptr, ArrayW<UnityEngine::Rect>(), ArrayW<float>());
+                            ERROR("animation info null");
                             return;
                         }
 
                         if (animationInfo->isFailed == true) {
-                            ERROR("animation failed");
                             onProcessed(nullptr, ArrayW<UnityEngine::Rect>(), ArrayW<float>());
+                            ERROR("animation failed");
                             return;
                         }
 
@@ -80,49 +79,47 @@ namespace BSML {
                     )
                 );
                 co_yield reinterpret_cast<System::Collections::IEnumerator*>(waitUntil);
+                co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(UnityEngine::WaitForSeconds::New_ctor(0.001f)));
                 lastThrottleTime = UnityEngine::Time::get_realtimeSinceStartup();
             }
 
             auto& currentFrameInfo = animationInfo->frames.at(i);
 
-            if (!texture) {
-                textureSize = GetTextureSize(animationInfo, i);
-                
-                width = currentFrameInfo->width;
-                height = currentFrameInfo->height;
-                texture = UnityEngine::Texture2D::New_ctor(width, height);
+            if (currentFrameInfo) {
+                if (!texture) {
+                    textureSize = GetTextureSize(animationInfo, i);
+                    
+                    width = currentFrameInfo->width;
+                    height = currentFrameInfo->height;
+                    texture = UnityEngine::Texture2D::New_ctor(width, height);
+                }
+
+                delays[i] = currentFrameInfo->delay;
+                auto frameTexture = UnityEngine::Texture2D::New_ctor(currentFrameInfo->width, currentFrameInfo->height, UnityEngine::TextureFormat::RGBA32, false);
+                frameTexture->set_wrapMode(UnityEngine::TextureWrapMode::Clamp);
+                frameTexture->LoadRawTextureData(currentFrameInfo->colors.ptr());
+                textureList[i] = frameTexture;
+
+                if (UnityEngine::Time::get_realtimeSinceStartup() > lastThrottleTime + 0.0005f) {
+                    co_yield nullptr;
+                    lastThrottleTime = UnityEngine::Time::get_realtimeSinceStartup();
+                }
+
+                delete currentFrameInfo;
+                currentFrameInfo = nullptr;
             }
-
-            delays[i] = currentFrameInfo->delay;
-
-            auto frameTexture = UnityEngine::Texture2D::New_ctor(currentFrameInfo->width, currentFrameInfo->height, UnityEngine::TextureFormat::RGBA32, false);
-            frameTexture->set_wrapMode(UnityEngine::TextureWrapMode::Clamp);
-            frameTexture->LoadRawTextureData(currentFrameInfo->colors.ptr());
-            
-            textureList[i] = frameTexture;
-
-            if (UnityEngine::Time::get_realtimeSinceStartup() > lastThrottleTime + 0.0005f) {
-                co_yield nullptr;
-                lastThrottleTime = UnityEngine::Time::get_realtimeSinceStartup();
-            }
-
-            delete currentFrameInfo;
-            currentFrameInfo = nullptr;
-            
         }
         // note to self, no longer readable = true means you can't encode the texture to png!
-        co_yield nullptr;
         auto atlas = texture->PackTextures(textureList, 2, textureSize, true);
         // cleanup
         for (auto t : textureList) {
-            UnityEngine::Object::Destroy(t);
+            UnityEngine::Object::DestroyImmediate(t);
         }
         if (onProcessed)
             onProcessed(texture, atlas, delays);
 
         // we are now done with the animation info
         delete animationInfo;
-        animationInfo = nullptr;
         co_return;
     }
 

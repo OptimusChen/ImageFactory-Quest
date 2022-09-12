@@ -87,7 +87,7 @@ namespace ImageFactory::UI {
             auto gButton = BeatSaberUI::CreateClickableImage(this->get_transform(), github, {35.0f, 20.0f}, {18.0f, 18.0f}, [=](){
                 CreateModal(github, "ImageFactory is open source! You can view it on GitHub. Have a\nbug report or a feature request? Submit an issue on GitHub.", this->get_transform(), 
                             "Github", "Github Link", [=](HMUI::ModalView* modal){
-                                Application::OpenURL("https://github.com/OptimusChen/ImageFactory-Quest");
+                                Application::OpenURL("https://github.com/OptimusChen/ImageFactory");
                             });
             });
             BeatSaberUI::AddHoverHint(gButton, "View the Github Page!");

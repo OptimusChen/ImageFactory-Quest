@@ -7,13 +7,7 @@
 #include "UnityEngine/UI/VerticalLayoutGroup.hpp"
 #include "UnityEngine/UI/LayoutElement.hpp"
 #include "HMUI/CurvedCanvasSettingsHelper.hpp"
-#include "UnityEngine/TextureWrapMode.hpp"
-#include "UnityEngine/Texture2D.hpp"
 #include "HMUI/ImageView.hpp"
-#include "Helpers/utilities.hpp"
-#include "BSML/Animations/AnimationInfo.hpp"
-#include "gif-lib/shared/gif_lib.h"
-#include "EasyGifReader.h"
 #include "Sprites.hpp"
 #include "main.hpp"
 
@@ -103,40 +97,5 @@ namespace UIUtils {
         BeatSaberUI::CreateText(modal->get_transform(), desc, {-42.0f, 10.0f}, true);
 
          return modal;
-    }
-
-    using namespace BSML;
-
-    inline uint32_t make_black_transparent(const uint32_t& v) {
-        return v >> 8 ? v : 0;
-    }
-
-    Sprite* FirstFrame(std::string path) {
-        auto gifReader = EasyGifReader::openFile(path.c_str());
-        int width = gifReader.width(), height = gifReader.height(), frameCount = gifReader.frameCount();
-
-        for (const auto& gifFrame : gifReader) {
-            auto currentFrame = new FrameInfo(gifFrame.width(), gifFrame.height());
-
-            const uint8_t* pixels = (const uint8_t*)gifFrame.pixels();
-            uint8_t* colorData = currentFrame->colors.ptr()->values + currentFrame->colors.ptr()->Length();
-
-            int height = gifFrame.height();
-            int rowSize = sizeof(uint32_t) * gifFrame.width();
-            for (int y = 0; y < height; y++) {
-                colorData -= rowSize;
-                
-                std::transform((uint32_t*)pixels, (uint32_t*)(pixels + rowSize), (uint32_t*)colorData, make_black_transparent);
-                pixels += rowSize;
-            }
-
-            auto frameTexture = Texture2D::New_ctor(width, height, UnityEngine::TextureFormat::RGBA32, false);
-            frameTexture->set_wrapMode(TextureWrapMode::Clamp);
-            frameTexture->LoadRawTextureData(currentFrame->colors.ptr());
-
-            return BSML::Utilities::LoadSpriteFromTexture(frameTexture);
-        }
-
-        return nullptr;
     }
 }

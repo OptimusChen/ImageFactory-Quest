@@ -1,7 +1,7 @@
 {
 	"_QPVersion": "0.1.1",
 	"name": "ImageFactory",
-	"id": "imagefactory",
+	"id": "ImageFactory",
 	"author": "Optimus",
 	"version": "0.1.0",
 	"packageId": "com.beatgames.beatsaber",
@@ -9,7 +9,7 @@
 	"description": "Place and customize images throughout your game.",
 	"dependencies": [],
 	"modFiles": [
-		"libimagefactory.so"
+		"libImageFactory.so"
 	],
 	"libraryFiles": [
 		"libbeatsaber-hook_2_3_2.so"

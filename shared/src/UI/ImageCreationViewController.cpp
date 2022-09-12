@@ -60,7 +60,7 @@ namespace ImageFactory::UI {
             listBarElement->set_preferredHeight(60);
 
             auto listBG = listBar->get_gameObject()->AddComponent<Backgroundable*>();
-            listBG->ApplyBackground("panel-top");
+            listBG->ApplyBackground(il2cpp_utils::newcsstr("panel-top"));
             listBG->background->set_color(UnityEngine::Color(0.1f, 0.1f, 0.1f, 0.1f));
 
             GameObject* container = BeatSaberUI::CreateScrollableSettingsContainer(listBG->get_transform());
@@ -126,7 +126,11 @@ namespace ImageFactory::UI {
             SetPreferredSize(img, 10.0f, 2.0f);
 
             if (FileUtils::isGifFile(image)) {
-                img->set_sprite(UIUtils::FirstFrame("file://" + image));
+                BSML::Utilities::SetImage(img, "file://" + image);
+
+                while (!img->GetComponent<BSML::AnimationStateUpdater*>()->get_controllerData()) {
+                    co_yield nullptr;
+                }
             }
 
             System::IO::FileStream* stream = System::IO::FileStream::New_ctor(image, System::IO::FileMode::Open);

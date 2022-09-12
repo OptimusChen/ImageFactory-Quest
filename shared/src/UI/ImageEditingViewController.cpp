@@ -159,7 +159,8 @@ namespace ImageFactory::UI {
         SetPreferredSize(image, 10.0f, 2.0f);
 
         if (FileUtils::isGifFile(path)) {
-            image->set_sprite(UIUtils::FirstFrame("file://" + path));
+            image->set_sprite(BeatSaberUI::Base64ToSprite(Blank));
+            BSML::Utilities::SetImage(image, "file://" + path);
         }
 
         LayoutElement* imgElem = image->GetComponent<LayoutElement*>();
