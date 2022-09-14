@@ -36,7 +36,7 @@ inline uint32_t make_black_transparent(const uint32_t& v) {
 
 namespace BSML {
 
-    custom_types::Helpers::Coroutine GifDecoder::Process(ArrayW<uint8_t> data, std::function<void(AnimationInfo*)> onFinished) {
+    custom_types::Helpers::Coroutine GifDecoder::Process(ArrayW<uint8_t> data,  std::function<void(AnimationInfo*)> onFinished) {
         auto animationInfo = new AnimationInfo();
         auto taskDelegate = MakeSystemAction(
             [data, animationInfo]() {
@@ -62,7 +62,7 @@ namespace BSML {
         co_return;
     }
 
-    void GifDecoder::ProcessingThread(ArrayW<uint8_t> gifData, AnimationInfo* animationInfo) {
+    void GifDecoder::ProcessingThread(ArrayW<uint8_t> gifData,  AnimationInfo* animationInfo) {
         DEBUG("Open gif");
         try {
             auto gifReader = EasyGifReader::openMemory(gifData.begin(), gifData.size());

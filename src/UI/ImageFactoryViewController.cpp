@@ -54,7 +54,10 @@ namespace ImageFactory::UI {
              });
             BeatSaberUI::AddHoverHint(sButton, "Global Mod Settings");
 
-            auto rButton = BeatSaberUI::CreateClickableImage(this->get_transform(), reset, {-35.0f, 0.0f}, {18.0f, 18.0f}, [=](){ });
+            auto rButton = BeatSaberUI::CreateClickableImage(this->get_transform(), reset, {-35.0f, 0.0f}, {18.0f, 18.0f}, [=](){ 
+                Config::Reset();
+            });
+
             rButton->set_preserveAspect(true);
             BeatSaberUI::AddHoverHint(rButton, "Reset All Config Data");
 

@@ -53,7 +53,7 @@ namespace BSML::Utilities {
     /// @param loadingAnimation currently unused, but might eventually be used for a loading animation while stuff is downloading
     /// @param scaleOptions the scale options to use, if any
     /// @param onFinished a callback to call when the image is finished loading, if any
-    void SetImage(UnityEngine::UI::Image* image, StringW path, bool loadingAnimation, ScaleOptions scaleOptions, std::function<void()> onFinished = nullptr);
+    void SetImage(UnityEngine::UI::Image* image, StringW path, bool loadingAnimation,  ScaleOptions scaleOptions, std::function<void()> onFinished = nullptr);
 
     /// @brief function to get data at a URI, this is not blocking as it dispatches a coroutine
     /// @param uri the URI to get data from

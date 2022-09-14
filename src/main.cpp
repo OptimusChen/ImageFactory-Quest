@@ -26,6 +26,7 @@ Logger& getLogger() {
 
 void ImageFactory::InstallHooks() {
     Hooks::LoadImagesHook();
+    Hooks::MenuTransitionsHelper();
     Presenters::ComboHooks();
     Presenters::PercentHooks();
     Presenters::PresenterHooks();

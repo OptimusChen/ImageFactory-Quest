@@ -7,6 +7,7 @@
 #include "UnityEngine/Transform.hpp"
 #include "UnityEngine/UI/Button.hpp"
 #include "UnityEngine/Sprite.hpp"
+#include "UnityEngine/Texture2D.hpp"
 #include "UnityEngine/UI/HorizontalLayoutGroup.hpp"
 #include "HMUI/ModalView.hpp"
 #include <string_view>

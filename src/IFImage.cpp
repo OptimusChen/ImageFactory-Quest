@@ -2,7 +2,9 @@
 
 #include "main.hpp"
 #include "Sprites.hpp"
+#include "PluginConfig.hpp"
 #include "Utils/FileUtils.hpp"
+#include "Utils/UIUtils.hpp"
 #include "UnityEngine/Vector3.hpp"
 #include "UnityEngine/Rect.hpp"
 #include "questui/shared/BeatSaberUI.hpp"
@@ -23,8 +25,8 @@ namespace ImageFactory {
 
         screen = BeatSaberUI::CreateFloatingScreen({scaleX * (width / 3), scaleY * (height / 3)}, {x, y, z}, {angleX, angleY, angleZ}, 0.0f, false, true, 4);
         image = BeatSaberUI::CreateImage(screen->get_transform(), sprite, {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
-        UnityEngine::Object::DontDestroyOnLoad(screen);
-        UnityEngine::Object::DontDestroyOnLoad(image);
+        Object::DontDestroyOnLoad(screen);
+        Object::DontDestroyOnLoad(image);
 
         screen->set_active(false);
 
@@ -34,6 +36,7 @@ namespace ImageFactory {
     void IFImage::Spawn() {
         if (!enabled) return; 
         if (!screen) return;
+        if (!getPluginConfig().Enabled.GetValue()) return;
 
         screen->set_active(true);
     }
@@ -123,7 +126,7 @@ namespace ImageFactory {
             width = gifReader.width();
             height = gifReader.height();  
 
-            sprite = BeatSaberUI::Base64ToSprite(Blank);
+            sprite = UIUtils::FirstFrame(path);
         }
 
         Create();

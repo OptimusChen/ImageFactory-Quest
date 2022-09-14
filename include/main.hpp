@@ -24,6 +24,7 @@ Logger& getLogger();
 
 namespace ImageFactory {    
     namespace Hooks {
+        void MenuTransitionsHelper();
         void LoadImagesHook();
     }
 
