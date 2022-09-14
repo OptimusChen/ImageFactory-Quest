@@ -16,6 +16,14 @@
 
 #include "GlobalNamespace/SharedCoroutineStarter.hpp"
 #include "System/Func_1.hpp"
+
+#include "UnityEngine/UI/RawImage.hpp"
+#include "UnityEngine/GameObject.hpp"
+#include "UnityEngine/Transform.hpp"
+#include "UnityEngine/Resources.hpp"
+#include "questui/shared/ArrayUtil.hpp"
+#include "UI/ImageCreationViewController.hpp"
+
 DEFINE_TYPE(BSML, AnimationLoader);
 
 
@@ -27,7 +35,7 @@ namespace BSML {
         return maxSize >= 4096 ? 4096 : maxSize;
     }
 
-    void AnimationLoader::Process(AnimationType type, ArrayW<uint8_t> data, std::function<void(UnityEngine::Texture2D*, ArrayW<UnityEngine::Rect>, ArrayW<float>)> onProcessed) {
+    void AnimationLoader::Process(AnimationType type, ArrayW<uint8_t> data,  std::function<void(UnityEngine::Texture2D*, ArrayW<UnityEngine::Rect>, ArrayW<float>)> onProcessed) {
         auto sharedStarter = GlobalNamespace::SharedCoroutineStarter::get_instance();
         DEBUG("Starting animation decode");
         switch (type) {
@@ -58,8 +66,9 @@ namespace BSML {
                 break;
         }
     }
+    
 
-    custom_types::Helpers::Coroutine AnimationLoader::ProcessAnimationInfo(AnimationInfo* animationInfo, std::function<void(UnityEngine::Texture2D*, ArrayW<UnityEngine::Rect>, ArrayW<float>)> onProcessed) {
+    custom_types::Helpers::Coroutine AnimationLoader::ProcessAnimationInfo(AnimationInfo* animationInfo,  std::function<void(UnityEngine::Texture2D*, ArrayW<UnityEngine::Rect>, ArrayW<float>)> onProcessed) {
         DEBUG("ProcessAnimInfo");
         int textureSize = get_atlasSizeLimit(), width = 0, height = 0;
         UnityEngine::Texture2D* texture = nullptr;

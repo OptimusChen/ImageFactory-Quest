@@ -6,7 +6,9 @@
 #include "UnityEngine/RectTransform.hpp"
 #include "UnityEngine/UI/VerticalLayoutGroup.hpp"
 #include "UnityEngine/UI/LayoutElement.hpp"
+#include "UnityEngine/UI/RawImage.hpp"
 #include "HMUI/CurvedCanvasSettingsHelper.hpp"
+#include "UnityEngine/SpriteMeshType.hpp"
 #include "UnityEngine/TextureWrapMode.hpp"
 #include "UnityEngine/Texture2D.hpp"
 #include "HMUI/ImageView.hpp"
@@ -16,6 +18,7 @@
 #include "EasyGifReader.h"
 #include "Sprites.hpp"
 #include "main.hpp"
+#include <map>
 
 using namespace HMUI;
 using namespace TMPro;
@@ -111,31 +114,44 @@ namespace UIUtils {
         return v >> 8 ? v : 0;
     }
 
+    std::unordered_map<std::string, Sprite*>* map = new std::unordered_map<std::string, Sprite*>();
     Sprite* FirstFrame(std::string path) {
-        auto gifReader = EasyGifReader::openFile(path.c_str());
-        int width = gifReader.width(), height = gifReader.height(), frameCount = gifReader.frameCount();
-
-        for (const auto& gifFrame : gifReader) {
-            auto currentFrame = new FrameInfo(gifFrame.width(), gifFrame.height());
-
-            const uint8_t* pixels = (const uint8_t*)gifFrame.pixels();
-            uint8_t* colorData = currentFrame->colors.ptr()->values + currentFrame->colors.ptr()->Length();
-
-            int height = gifFrame.height();
-            int rowSize = sizeof(uint32_t) * gifFrame.width();
-            for (int y = 0; y < height; y++) {
-                colorData -= rowSize;
-                
-                std::transform((uint32_t*)pixels, (uint32_t*)(pixels + rowSize), (uint32_t*)colorData, make_black_transparent);
-                pixels += rowSize;
-            }
-
-            auto frameTexture = Texture2D::New_ctor(width, height, UnityEngine::TextureFormat::RGBA32, false);
-            frameTexture->set_wrapMode(TextureWrapMode::Clamp);
-            frameTexture->LoadRawTextureData(currentFrame->colors.ptr());
-
-            return BSML::Utilities::LoadSpriteFromTexture(frameTexture);
+        if (map->contains(path)) {
+            return map->at(path);
         }
+
+        try {
+            auto gifReader = EasyGifReader::openFile(path.c_str());
+            int  width = gifReader.width(), height = gifReader.height(), frameCount = gifReader.frameCount();
+
+            for (const auto& gifFrame : gifReader) {
+                auto currentFrame = new FrameInfo(gifFrame.width(), gifFrame.height());
+
+                const uint8_t* pixels = (const uint8_t*)gifFrame.pixels();
+                uint8_t* colorData = currentFrame->colors.ptr()->values + currentFrame->colors.ptr()->Length();
+
+                int height = gifFrame.height();
+                int rowSize = sizeof(uint32_t) * gifFrame.width();
+                
+                for (int y = 0; y < height; y++) {
+                    colorData -= rowSize;
+                    
+                    std::transform((uint32_t*)pixels, (uint32_t*)(pixels + rowSize), (uint32_t*)colorData, make_black_transparent);
+                    pixels += rowSize;
+                }
+
+                auto frameTexture = Texture2D::New_ctor(gifFrame.width(), gifFrame.height(), UnityEngine::TextureFormat::RGBA32, false);
+                frameTexture->set_wrapMode(TextureWrapMode::Clamp);
+                frameTexture->LoadRawTextureData(currentFrame->colors.ptr());
+                frameTexture->Apply();
+
+                auto sprite = BSML::Utilities::LoadSpriteFromTexture(frameTexture);
+                
+                map->insert({path, sprite});
+
+                return sprite;
+            }
+        } catch (EasyGifReader::Error gifError) { }
 
         return nullptr;
     }

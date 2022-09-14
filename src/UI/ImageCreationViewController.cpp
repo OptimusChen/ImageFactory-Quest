@@ -126,7 +126,8 @@ namespace ImageFactory::UI {
             SetPreferredSize(img, 10.0f, 2.0f);
 
             if (FileUtils::isGifFile(image)) {
-                img->set_sprite(UIUtils::FirstFrame("file://" + image));
+                img->set_sprite(UIUtils::FirstFrame(image));       
+                co_yield reinterpret_cast<Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.5f)));
             }
 
             System::IO::FileStream* stream = System::IO::FileStream::New_ctor(image, System::IO::FileMode::Open);
@@ -149,6 +150,7 @@ namespace ImageFactory::UI {
                         Vector2(30.0f, 30.0f));
 
                     if (FileUtils::isGifFile(image)) {
+                        imgModal->set_sprite(UIUtils::FirstFrame(image));
                         BSML::Utilities::SetImage(imgModal, "file://" + image);
                     }
 

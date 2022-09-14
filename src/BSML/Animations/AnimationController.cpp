@@ -1,6 +1,7 @@
 #include "main.hpp"
 #include "BSML/Animations/AnimationController.hpp"
 
+#include "PluginConfig.hpp"
 
 #include "UnityEngine/GameObject.hpp"
 #include <chrono>
@@ -47,7 +48,9 @@ namespace BSML {
         while (enumerator.MoveNext()) {
             auto current = reinterpret_cast<AnimationControllerData*>(enumerator.get_Current().get_Value());
             if (current->get_isPlaying()) {
-                current->CheckFrame(now);
+                if (getPluginConfig().AnimateImages.GetValue()) {
+                    current->CheckFrame(now);
+                }
             }
         }
     }

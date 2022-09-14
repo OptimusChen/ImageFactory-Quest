@@ -15,7 +15,21 @@ using namespace UnityEngine;
 
 namespace ImageFactory {
     void Config::Reset() {
-        
+        PluginConfig_t& pluginConfig = getPluginConfig();
+        ConfigDocument& config = pluginConfig.config->config;
+
+        for (std::pair<IFImage*, std::string> pair : *PresenterManager::MAP) {
+            Delete(pair.first);
+        }
+
+        config.RemoveAllMembers();
+        pluginConfig.Amount.SetValue(0);
+        pluginConfig.AnimateImages.SetValue(true);
+        pluginConfig.Enabled.SetValue(true);
+        pluginConfig.IgnoreNoTextAndHud.SetValue(false);
+        pluginConfig.Images.SetValue("");
+        pluginConfig.config->Write();
+        pluginConfig.config->Reload();
     }   
 
     void Config::Add(IFImage* image) {

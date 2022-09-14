@@ -62,6 +62,10 @@ namespace ImageFactory::UI {
             container = BeatSaberUI::CreateScrollableSettingsContainer(containerParent);
 
             StartCoroutine(SetupListElements(container->get_transform()));
+        } else {
+            if (loadingControl) {
+                loadingControl->get_gameObject()->set_active(false);
+            }
         }
     }
 
@@ -159,7 +163,7 @@ namespace ImageFactory::UI {
         SetPreferredSize(image, 10.0f, 2.0f);
 
         if (FileUtils::isGifFile(path)) {
-            image->set_sprite(UIUtils::FirstFrame("file://" + path));
+            image->set_sprite(UIUtils::FirstFrame(path));
         }
 
         LayoutElement* imgElem = image->GetComponent<LayoutElement*>();
