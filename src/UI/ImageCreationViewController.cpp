@@ -152,6 +152,7 @@ namespace ImageFactory::UI {
                         Vector2(30.0f, 30.0f));
 
                     if (FileUtils::isGifFile(image)) {
+                        imgModal->set_sprite(UIUtils::FirstFrame(image));
                         BSML::Utilities::SetImage(imgModal, "file://" + image);
                     }
 

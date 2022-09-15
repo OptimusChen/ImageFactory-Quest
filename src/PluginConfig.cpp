@@ -25,6 +25,7 @@ namespace ImageFactory {
             Delete(pair.first);
         }
 
+        config.RemoveAllMembers();
         pluginConfig.Amount.SetValue(0);
         pluginConfig.AnimateImages.SetValue(true);
         pluginConfig.Enabled.SetValue(true);
