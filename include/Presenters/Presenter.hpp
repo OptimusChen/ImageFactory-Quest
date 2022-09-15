@@ -3,6 +3,7 @@
 #include "beatsaber-hook/shared/utils/typedefs-string.hpp"
 #include "main.hpp"
 #include "IFImage.hpp"
+#include "Utils/UIUtils.hpp"
 #include "UnityEngine/GameObject.hpp"
 #include "GlobalNamespace/SharedCoroutineStarter.hpp"
 #include "custom-types/shared/delegate.hpp"

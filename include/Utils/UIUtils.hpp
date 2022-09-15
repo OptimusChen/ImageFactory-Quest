@@ -20,4 +20,5 @@ namespace UIUtils {
     Backgroundable* CreateHeader(Transform* parent, std::string name, Vector3 localPos, Color color, int width, int height);
     HMUI::ModalView* CreateModal(Sprite* sprite, std::string desc, Transform* parent, std::string name, std::string buttonText, std::function<void(HMUI::ModalView*)> onClick);
     Sprite* FirstFrame(std::string path);
+    bool NoHud();
 }

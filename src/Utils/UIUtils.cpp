@@ -1,6 +1,10 @@
 #include "Utils/UIUtils.hpp"
 
 #include "questui/shared/BeatSaberUI.hpp"
+#include "System/Collections/Generic/Dictionary_2.hpp"
+#include "GlobalNamespace/PlayerSpecificSettings.hpp"
+#include "GlobalNamespace/PlayerDataModel.hpp"
+#include "GlobalNamespace/PlayerData.hpp"
 #include "TMPro/TextMeshProUGUI.hpp"
 #include "UnityEngine/Vector2.hpp"
 #include "UnityEngine/RectTransform.hpp"
@@ -16,6 +20,7 @@
 #include "BSML/Animations/AnimationInfo.hpp"
 #include "gif-lib/shared/gif_lib.h"
 #include "EasyGifReader.h"
+#include "PluginConfig.hpp"
 #include "Sprites.hpp"
 #include "main.hpp"
 #include <map>
@@ -114,10 +119,15 @@ namespace UIUtils {
         return v >> 8 ? v : 0;
     }
 
-    std::unordered_map<std::string, Sprite*>* map = new std::unordered_map<std::string, Sprite*>();
+    SafePtr<System::Collections::Generic::Dictionary_2<StringW, UnityEngine::Sprite*>> cache;
     Sprite* FirstFrame(std::string path) {
-        if (map->contains(path)) {
-            return map->at(path);
+        if (!cache) cache.emplace(System::Collections::Generic::Dictionary_2<StringW, UnityEngine::Sprite*>::New_ctor());
+
+        UnityEngine::Sprite* sprite = nullptr;
+        if (cache->TryGetValue(path, byref(sprite)) && sprite && sprite->m_CachedPtr.m_value) {
+            return sprite;
+        } else {
+            cache->Remove(path);
         }
 
         try {
@@ -145,14 +155,27 @@ namespace UIUtils {
                 frameTexture->LoadRawTextureData(currentFrame->colors.ptr());
                 frameTexture->Apply();
 
-                auto sprite = BSML::Utilities::LoadSpriteFromTexture(frameTexture);
+                sprite = BSML::Utilities::LoadSpriteFromTexture(frameTexture);
                 
-                map->insert({path, sprite});
+                cache->Add(path, sprite);
 
                 return sprite;
             }
         } catch (EasyGifReader::Error gifError) { }
 
         return nullptr;
+    }
+
+    GlobalNamespace::PlayerDataModel* data = nullptr;
+    bool NoHud() {
+        if (!data) data = Object::FindObjectOfType<GlobalNamespace::PlayerDataModel*>();
+
+        bool ignore = getPluginConfig().IgnoreNoTextAndHud.GetValue();
+
+        if (ignore) {
+            return true;
+        }
+
+        return ignore == data->get_playerData()->get_playerSpecificSettings()->get_noTextsAndHuds();
     }
 }

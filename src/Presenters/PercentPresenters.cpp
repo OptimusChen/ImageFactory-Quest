@@ -56,6 +56,8 @@ namespace ImageFactory::Presenters {
         auto rankCounter = Object::FindObjectOfType<RelativeScoreAndImmediateRankCounter*>();
 
         rankCounter->add_relativeScoreOrImmediateRankDidChangeEvent(custom_types::MakeDelegate<System::Action*>(std::function([=](){
+            if (!UIUtils::NoHud()) return;
+            
             int score = rankCounter->relativeScore * 100;
             
             double percentage = (double) score;

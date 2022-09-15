@@ -210,5 +210,14 @@ namespace ImageFactory::UI {
         editText->set_alignment(TMPro::TextAlignmentOptions::Center);
 
         levelBarLayout->get_gameObject()->set_active(true);
+
+        elems.push_back(levelBarLayout->get_gameObject());
+    }
+
+    void ImageEditingViewController::ClearList() {
+        for (int i = 0; i < elems.size(); i++) {
+            elems.at(i)->set_active(false);
+        }
     }
 }
+

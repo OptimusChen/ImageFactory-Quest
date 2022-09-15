@@ -120,13 +120,15 @@ namespace ImageFactory::UI {
             levelBarLayoutElement->set_minWidth(20.0f);
 
             Sprite* sprite = BeatSaberUI::FileToSprite(image);
+            Object::DontDestroyOnLoad(sprite);
 
             auto img = BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite, Vector2(2.0f, 0.0f), Vector2(10.0f, 2.0f));
 
             SetPreferredSize(img, 10.0f, 2.0f);
 
             if (FileUtils::isGifFile(image)) {
-                img->set_sprite(UIUtils::FirstFrame(image));       
+                img->set_sprite(UIUtils::FirstFrame(image));    
+
                 co_yield reinterpret_cast<Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.5f)));
             }
 
@@ -142,15 +144,14 @@ namespace ImageFactory::UI {
             auto button = BeatSaberUI::CreateUIButton(levelBarLayoutElement->get_transform(), "", Vector2(0.0f, 0.0f), Vector2(10.0f, 10.0f),
                 [=]() {
                     auto modal = BeatSaberUI::CreateModal(get_transform(), Vector2(70.0f, 50.0f),
-                        nullptr, true);;
+                        nullptr, true);
 
                     auto container = BeatSaberUI::CreateScrollableModalContainer(modal);
 
-                    auto imgModal = BeatSaberUI::CreateImage(modal->get_transform(), sprite, Vector2(-18.0f, 8.0f),
+                    auto imgModal = BeatSaberUI::CreateImage(modal->get_transform(), img->get_sprite(), Vector2(-18.0f, 8.0f),
                         Vector2(30.0f, 30.0f));
 
                     if (FileUtils::isGifFile(image)) {
-                        imgModal->set_sprite(UIUtils::FirstFrame(image));
                         BSML::Utilities::SetImage(imgModal, "file://" + image);
                     }
 
@@ -164,9 +165,9 @@ namespace ImageFactory::UI {
                     anim->set_fontSize(5.0f);
 
                     BeatSaberUI::CreateText(modal->get_transform(), "Width: " +
-                        StringUtils::removeTrailingZeros(ceil(sprite->get_textureRect().get_width())) + "px", Vector2(30.0f, 11.0f))->set_fontSize(5.0f);
+                        StringUtils::removeTrailingZeros(ceil(img->get_sprite()->get_textureRect().get_width())) + "px", Vector2(30.0f, 11.0f))->set_fontSize(5.0f);
                     BeatSaberUI::CreateText(modal->get_transform(),  "Height: " +
-                        StringUtils::removeTrailingZeros(ceil(sprite->get_textureRect().get_height())) + "px", Vector2(30.0f, 5.0f))->set_fontSize(5.0f);
+                        StringUtils::removeTrailingZeros(ceil(img->get_sprite()->get_textureRect().get_height())) + "px", Vector2(30.0f, 5.0f))->set_fontSize(5.0f);
 
                     BeatSaberUI::CreateText(modal->get_transform(), "File Size: " +
                         StringUtils::removeTrailingZeros(round(fileSize / FileUtils::FileSizeDivisor(fileSize))) +

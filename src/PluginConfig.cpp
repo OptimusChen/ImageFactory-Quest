@@ -1,6 +1,9 @@
 #include "../include/PluginConfig.hpp"
 
+#include "GlobalNamespace/MenuTransitionsHelper.hpp"
 #include "BSML/Animations/AnimationStateUpdater.hpp"
+#include "UI/ImageFactoryFlowCoordinator.hpp"
+#include "UI/ImageEditingViewController.hpp"
 #include "Presenters/PresenterManager.hpp"
 #include "UnityEngine/WaitForSeconds.hpp"
 #include "UnityEngine/GameObject.hpp"
@@ -22,7 +25,6 @@ namespace ImageFactory {
             Delete(pair.first);
         }
 
-        config.RemoveAllMembers();
         pluginConfig.Amount.SetValue(0);
         pluginConfig.AnimateImages.SetValue(true);
         pluginConfig.Enabled.SetValue(true);
@@ -30,6 +32,9 @@ namespace ImageFactory {
         pluginConfig.Images.SetValue("");
         pluginConfig.config->Write();
         pluginConfig.config->Reload();
+
+        auto flow = ArrayUtil::First(Object::FindObjectsOfType<UI::ImageFactoryFlowCoordinator*>());
+        flow->imageEditingViewController->ClearList();
     }   
 
     void Config::Add(IFImage* image) {

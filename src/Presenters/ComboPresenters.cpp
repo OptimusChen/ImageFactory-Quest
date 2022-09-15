@@ -86,6 +86,8 @@ namespace ImageFactory::Presenters {
         ComboController_Start(self);
 
         self->add_comboBreakingEventHappenedEvent(custom_types::MakeDelegate<System::Action*>(std::function([=](){
+            if (!UIUtils::NoHud()) return; 
+
             PresenterManager::DespawnforAll(PresenterManager::FULL_COMBO);
 
             for (std::pair<IFImage*, StringW> pair : *PresenterManager::MAP) {
@@ -98,6 +100,8 @@ namespace ImageFactory::Presenters {
         })));
 
         self->add_comboDidChangeEvent(custom_types::MakeDelegate<System::Action_1<int>*>(std::function([=](int combo){
+            if (!UIUtils::NoHud()) return;
+            
             for (std::pair<IFImage*, StringW> pair : *PresenterManager::MAP) {
                 IFImage* image = pair.first;
 

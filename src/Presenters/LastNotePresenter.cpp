@@ -61,6 +61,8 @@ namespace ImageFactory::Presenters {
     MAKE_HOOK_MATCH(NoteController_Init, &NoteController::Init, void, NoteController* self, NoteData* noteData, float worldRotation, Vector3 moveStartPos, Vector3 moveEndPos, Vector3 jumpEndPos, float moveDuration, float jumpDuration, float jumpGravity, float endRotation, float uniformScale, bool rotateTowardsPlayer, bool useRandomRotation) {
         Presenter::currentNoteCount++;
 
+        if (!UIUtils::NoHud()) return;
+
         if (Presenter::currentNoteCount == noteCount) {
             for (std::pair<IFImage*, StringW> pair : *PresenterManager::MAP) {
                 IFImage* image = pair.first;
