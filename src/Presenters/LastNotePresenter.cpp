@@ -53,20 +53,23 @@ namespace ImageFactory::Presenters {
     MAKE_HOOK_MATCH(StandardLevelDetailView_RefreshContent, &StandardLevelDetailView::RefreshContent, void, StandardLevelDetailView* self) {
         StandardLevelDetailView_RefreshContent(self);
 
-        StartCoroutine(GetNotesCount(self->selectedDifficultyBeatmap, [&](int notes){
-            noteCount = notes;
-        }));
+        if (self->selectedDifficultyBeatmap) {
+            StartCoroutine(GetNotesCount(self->selectedDifficultyBeatmap, [&](int notes){
+                noteCount = notes;
+            }));
+        }
     }
 
     MAKE_HOOK_MATCH(NoteController_Init, &NoteController::Init, void, NoteController* self, NoteData* noteData, float worldRotation, Vector3 moveStartPos, Vector3 moveEndPos, Vector3 jumpEndPos, float moveDuration, float jumpDuration, float jumpGravity, float endRotation, float uniformScale, bool rotateTowardsPlayer, bool useRandomRotation) {
         Presenter::currentNoteCount++;
 
-        if (!UIUtils::NoHud()) return;
-
         if (Presenter::currentNoteCount == noteCount) {
             for (std::pair<IFImage*, StringW> pair : *PresenterManager::MAP) {
                 IFImage* image = pair.first;
                 if (pair.second.starts_with(PresenterManager::LAST_NOTE)) {
+                    
+                    if (!UIUtils::NoHud()) return;
+
                     StartCoroutine(PresenterManager::DespawnAfter(image, stof(image->GetExtraData("last_note_duration", "1"))));
                 }
             }

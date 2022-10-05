@@ -11,7 +11,6 @@
 #include "System/IO/FileStream.hpp"
 #include "System/Diagnostics/Stopwatch.hpp"
 #include "questui/shared/BeatSaberUI.hpp"
-#include "questui/shared/ArrayUtil.hpp"
 #include "UnityEngine/Rect.hpp"
 #include "UnityEngine/Resources.hpp"
 #include "UnityEngine/WaitForSeconds.hpp"
@@ -178,7 +177,7 @@ namespace ImageFactory::UI {
                     
                     BeatSaberUI::CreateUIButton(modal->get_transform(), "CREATE", Vector2(14.0f, -17.0f),
                         Vector2(30.0f, 10.0f), [=]() { 
-                            ImageFactoryFlowCoordinator* flow = ArrayUtil::First(Object::FindObjectsOfType<ImageFactoryFlowCoordinator*>());
+                            ImageFactoryFlowCoordinator* flow = Object::FindObjectsOfType<ImageFactoryFlowCoordinator*>().First();
 
                             if (flow) {
                                 flow->CreateImage(image);

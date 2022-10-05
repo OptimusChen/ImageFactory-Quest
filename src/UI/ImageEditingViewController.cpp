@@ -9,7 +9,6 @@
 #include "HMUI/Touchable.hpp"
 #include "HMUI/Touchable.hpp"
 #include "questui/shared/BeatSaberUI.hpp"
-#include "questui/shared/ArrayUtil.hpp"
 #include "Presenters/PresenterManager.hpp"
 #include "UnityEngine/Rect.hpp"
 #include "UnityEngine/Resources.hpp"
@@ -184,7 +183,7 @@ namespace ImageFactory::UI {
             [=]() {
                 for (std::pair<IFImage*, std::string> pair : *PresenterManager::MAP) {
                     if (pair.first->internalName.starts_with(fileName)) {
-                        Config::Delete(pair.first);
+                        Config::Delete(pair.first, true);
                         levelBarLayout->get_gameObject()->set_active(false);
                         break;
                     }
@@ -200,7 +199,7 @@ namespace ImageFactory::UI {
             [=]() {
                 for (std::pair<IFImage*, std::string> pair : *PresenterManager::MAP) {
                     if (pair.first->internalName.starts_with(fileName)) {
-                        ArrayUtil::First(Resources::FindObjectsOfTypeAll<ImageFactoryFlowCoordinator*>())->EditImage(pair.first);
+                        Resources::FindObjectsOfTypeAll<ImageFactoryFlowCoordinator*>().First()->EditImage(pair.first);
                         break;
                     }
                 }

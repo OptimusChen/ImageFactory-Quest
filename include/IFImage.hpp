@@ -12,23 +12,32 @@
 #include "UnityEngine/SpriteRenderer.hpp"
 #include "UnityEngine/Transform.hpp"
 #include "UnityEngine/UI/Image.hpp"
+#include "UnityEngine/Vector2.hpp"
 #include "UnityEngine/Vector3.hpp"
+#include "UnityEngine/SpriteRenderer.hpp"
 #include "VRUIControls/VRPointer.hpp"
 #include "custom-types/shared/coroutine.hpp"
 #include "custom-types/shared/macros.hpp"
 #include "custom-types/shared/types.hpp"
 #include "questui/shared/CustomTypes/Components/FloatingScreen/FloatingScreen.hpp"
 #include "questui/shared/QuestUI.hpp"
+#include "Tweening/TimeTweeningManager.hpp"
 
 using namespace QuestUI;
 using namespace std;
 
 DECLARE_CLASS_CODEGEN(ImageFactory, IFImage, UnityEngine::MonoBehaviour,
     DECLARE_INSTANCE_METHOD(void, Create);
-    DECLARE_INSTANCE_METHOD(void, Spawn);
-    DECLARE_INSTANCE_METHOD(void, Despawn);
+    DECLARE_INSTANCE_METHOD(void, Spawn, bool);
+    DECLARE_INSTANCE_METHOD(void, Despawn, bool);
     DECLARE_INSTANCE_METHOD(void, Update, bool); 
-    DECLARE_INSTANCE_METHOD(void, Destroy);
+    DECLARE_INSTANCE_METHOD(void, Destroy); 
+    DECLARE_INSTANCE_METHOD(UnityEngine::Vector2, get_size);
+    DECLARE_INSTANCE_METHOD(void, set_size, UnityEngine::Vector2); 
+    DECLARE_INSTANCE_METHOD(UnityEngine::Vector3, get_position);
+    DECLARE_INSTANCE_METHOD(void, set_position, UnityEngine::Vector3); 
+    DECLARE_INSTANCE_METHOD(UnityEngine::Vector3, get_rotation);
+    DECLARE_INSTANCE_METHOD(void, set_rotation, UnityEngine::Vector3); 
     DECLARE_INSTANCE_FIELD(float, width);
     DECLARE_INSTANCE_FIELD(float, height); 
     DECLARE_INSTANCE_FIELD(float, x);
@@ -41,11 +50,14 @@ DECLARE_CLASS_CODEGEN(ImageFactory, IFImage, UnityEngine::MonoBehaviour,
     DECLARE_INSTANCE_FIELD(float, scaleY); 
     DECLARE_INSTANCE_FIELD(bool, hasBeenCreated);
     DECLARE_INSTANCE_FIELD(bool, inSong);
-    DECLARE_INSTANCE_FIELD(UnityEngine::Sprite*, sprite);
-    DECLARE_INSTANCE_FIELD(UnityEngine::GameObject*, screen);
+    DECLARE_INSTANCE_FIELD(bool, canAnimate);
+    DECLARE_INSTANCE_FIELD(bool, isAnimated);
+    DECLARE_INSTANCE_FIELD(UnityEngine::SpriteRenderer*, spriteRenderer);
     DECLARE_INSTANCE_FIELD(HMUI::ImageView*, image);
-    DECLARE_INSTANCE_FIELD(UnityEngine::GameObject*, inSongScreen);
+    DECLARE_INSTANCE_FIELD(UnityEngine::Sprite*, sprite);
     DECLARE_INSTANCE_FIELD(HMUI::ImageView*, inSongImage);
+    DECLARE_INSTANCE_FIELD(UnityEngine::GameObject*, screen);
+    DECLARE_INSTANCE_FIELD(UnityEngine::GameObject*, inSongScreen);
     DECLARE_CTOR(ctor, UnityEngine::Sprite* sprite, StringW path); 
     
     public:

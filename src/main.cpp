@@ -1,8 +1,8 @@
 #include "main.hpp"
 
-#include "../include/PluginConfig.hpp"
+#include "IFImage.hpp"
+#include "PluginConfig.hpp"
 #include "questui/shared/QuestUI.hpp"
-#include "questui/shared/BeatSaberUI.hpp"
 #include "beatsaber-hook/shared/utils/hooking.hpp"
 #include "UI/ImageFactoryFlowCoordinator.hpp"
 #include "paper/shared/logger.hpp"

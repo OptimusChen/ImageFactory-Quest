@@ -120,15 +120,15 @@ namespace ImageFactory::Presenters {
                 if (pair.second.starts_with(PresenterManager::COMBO_HOLD)) {
                     if (image->GetExtraData("combo_hold_when", "Below").starts_with("Above")) {
                         if (combo > stoi(image->GetExtraData("combo_hold_combo", "100"))) {
-                            image->Spawn();
+                            image->Spawn(true);
                         } else {
-                            image->Despawn();
+                            image->Despawn(true);
                         }
                     } else {
                         if (combo < stoi(image->GetExtraData("combo_hold_combo", "100"))) {
-                            image->Spawn();
+                            image->Spawn(true);
                         } else {
-                            image->Despawn();
+                            image->Despawn(true);
                         }
                     }
                 }

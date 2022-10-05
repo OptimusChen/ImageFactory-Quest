@@ -68,15 +68,15 @@ namespace ImageFactory::Presenters {
                 if (pair.second.starts_with(PresenterManager::PERCENT)) {
                     if (image->GetExtraData("percent_when", "Below").starts_with("Above")) {
                         if (percentage > stof(image->GetExtraData("percent_%", "80"))) {
-                            image->Spawn();
+                            image->Spawn(true);
                         } else {
-                            image->Despawn();
+                            image->Despawn(true);
                         }
                     } else if (image->GetExtraData("percent_when", "Below").starts_with("Below")) {
                         if (percentage < stof(image->GetExtraData("percent_%", "80"))) {
-                            image->Spawn();
+                            image->Spawn(true);
                         } else {
-                            image->Despawn();
+                            image->Despawn(true);
                         }
                     }
                 }
@@ -84,9 +84,9 @@ namespace ImageFactory::Presenters {
                 if (pair.second.starts_with(PresenterManager::PERCENT_RANGE)) {
                     if (percentage > stof(image->GetExtraData("percentrange_above", "80")) &&
                         percentage < stof(image->GetExtraData("percentrange_below", "90"))) {
-                      image->Spawn();
+                      image->Spawn(true);
                     } else {
-                        image->Despawn();
+                        image->Despawn(true);
                     }
                 }
             }

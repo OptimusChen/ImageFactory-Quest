@@ -1,7 +1,5 @@
 #include "../include/PluginConfig.hpp"
 
-#include "GlobalNamespace/MenuTransitionsHelper.hpp"
-#include "BSML/Animations/AnimationStateUpdater.hpp"
 #include "UI/ImageFactoryFlowCoordinator.hpp"
 #include "UI/ImageEditingViewController.hpp"
 #include "Presenters/PresenterManager.hpp"
@@ -10,7 +8,6 @@
 #include "Utils/StringUtils.hpp"
 #include "Utils/FileUtils.hpp"
 #include "IFImage.hpp"
-#include "Sprites.hpp"
 
 DEFINE_CONFIG(PluginConfig);
 
@@ -20,12 +17,18 @@ namespace ImageFactory {
     void Config::Reset() {
         PluginConfig_t& pluginConfig = getPluginConfig();
         ConfigDocument& config = pluginConfig.config->config;
+        std::vector<IFImage*> info;
 
         for (std::pair<IFImage*, std::string> pair : *PresenterManager::MAP) {
-            Delete(pair.first);
+            Delete(pair.first, false);
+
+            info.push_back(pair.first);
         }
 
-        config.RemoveAllMembers();
+        for (int i = 0; i < info.size(); i++) {
+            PresenterManager::ClearInfo(info[i]);
+        }
+
         pluginConfig.Amount.SetValue(0);
         pluginConfig.AnimateImages.SetValue(true);
         pluginConfig.Enabled.SetValue(true);
@@ -34,7 +37,7 @@ namespace ImageFactory {
         pluginConfig.config->Write();
         pluginConfig.config->Reload();
 
-        auto flow = ArrayUtil::First(Object::FindObjectsOfType<UI::ImageFactoryFlowCoordinator*>());
+        auto flow = Object::FindObjectsOfType<UI::ImageFactoryFlowCoordinator*>().First();
         flow->imageEditingViewController->ClearList();
     }   
 
@@ -112,10 +115,10 @@ namespace ImageFactory {
         }
     }
 
-    void Config::Delete(IFImage* image) {
+    void Config::Delete(IFImage* image, bool clearInfo) {
         PluginConfig_t& pluginConfig = getPluginConfig();
         ConfigDocument& configDoc = pluginConfig.config->config;
-        if (configDoc.HasMember(image->internalName)) {    
+        if (configDoc.HasMember(image->internalName)) {
             configDoc.RemoveMember(image->internalName);
             pluginConfig.Amount.SetValue(pluginConfig.Amount.GetValue() - 1);
             
@@ -127,7 +130,10 @@ namespace ImageFactory {
             pluginConfig.config->Reload();
 
             image->Destroy();
-            PresenterManager::ClearInfo(image);
+
+            if (clearInfo) {
+                PresenterManager::ClearInfo(image);
+            }
         }
     }
 
@@ -137,8 +143,6 @@ namespace ImageFactory {
         std::string images = getPluginConfig().Images.GetValue();
         ConfigDocument& config = getPluginConfig().config->config;
 
-        GameObject* obj = GameObject::New_ctor("IFImages");
-
         std::vector<std::string> split = StringUtils::split(images, '/');
 
         for (int i = 0; i < split.size(); i++) {
@@ -147,8 +151,9 @@ namespace ImageFactory {
             if (fileName->get_Length() != 0) {  
                 if (config.HasMember(fileName)) {
                     rapidjson::Value& configValue = config[static_cast<std::string>(fileName)];
+                    GameObject* obj = GameObject::New_ctor(fileName);
                     IFImage* image = obj->AddComponent<IFImage*>();
-
+                    
                     image->path = configValue["path"].GetString();
                     image->sprite = BeatSaberUI::FileToSprite(image->path);
                     image->internalName = fileName;
@@ -166,6 +171,11 @@ namespace ImageFactory {
                     image->presentationoption = configValue["presentationOption"].GetString();
                     image->enabled = configValue["enabled"].GetBool();
                     image->extraData = new std::unordered_map<std::string, std::string>();
+                    image->spriteRenderer = image->get_gameObject()->AddComponent<SpriteRenderer*>();
+                    image->isAnimated = FileUtils::isGifFile(image->path);
+                    image->canAnimate = false;
+
+                    getLogger().info("SPRITERENDERER: %p", image->spriteRenderer);
 
                     StringW extraData = configValue["extraData"].GetString();
 
@@ -188,12 +198,15 @@ namespace ImageFactory {
                     PresenterManager::Parse(image, image->presentationoption);
 
                     if (FileUtils::isGifFile(image->path)) {
-                        image->sprite = BeatSaberUI::Base64ToSprite(Blank);
+                        image->sprite = UIUtils::FirstFrame(image->path);
                     }
+
+                    image->spriteRenderer->set_sprite(UIUtils::FirstFrame(image->path));
+                    image->spriteRenderer->get_gameObject()->SetActive(false);
 
                     image->Create();
                     image->Update(false);
-                    image->Despawn();
+                    image->Despawn(false);
                 }
             }
 

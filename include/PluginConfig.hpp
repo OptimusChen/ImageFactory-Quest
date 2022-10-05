@@ -29,7 +29,7 @@ namespace ImageFactory {
     class Config {
         public:
             static void Reset();
-            static void Delete(IFImage* image);
+            static void Delete(IFImage* image, bool clearInfo);
             static void Add(IFImage* image);
             static void Update(IFImage* image);
             static custom_types::Helpers::Coroutine LoadImages();

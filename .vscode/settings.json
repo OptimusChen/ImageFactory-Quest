@@ -112,6 +112,8 @@
         "xstddef": "cpp",
         "xtr1common": "cpp",
         "xtree": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "__functional_03": "cpp",
+        "__memory": "cpp"
     }
 }

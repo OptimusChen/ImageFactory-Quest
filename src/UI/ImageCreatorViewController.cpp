@@ -50,7 +50,7 @@ namespace ImageFactory::UI {
             get_gameObject()->AddComponent<Touchable*>();
 
             if (editing) {
-                image->Spawn();
+                image->Spawn(false);
             }
             
             image->Update(true);
@@ -123,15 +123,15 @@ namespace ImageFactory::UI {
 
             options = PresenterManager::GetPresenter(image->presentationoption)->GetUIElements(list->get_transform(), image);
 
-            ImageFactoryFlowCoordinator* flow = ArrayUtil::First(Object::FindObjectsOfType<ImageFactoryFlowCoordinator*>());
+            ImageFactoryFlowCoordinator* flow = Object::FindObjectsOfType<ImageFactoryFlowCoordinator*>().First();
 
             auto cancelButton = BeatSaberUI::CreateUIButton(this->get_transform(), "", {-22.0f, -38.0f}, {40.0f, 8.0f}, 
                 [=]() {
                     flow->ResetViews();
 
                     if (editing) {
-                        image->Despawn();
-                        backUpImage->Spawn();
+                        image->Despawn(false);
+                        backUpImage->Spawn(false);
                         PresenterManager::ClearInfo(image);
                         PresenterManager::Parse(backUpImage, backUpImage->presentationoption);
                         PresenterManager::SpawnInMenu();
@@ -180,7 +180,7 @@ namespace ImageFactory::UI {
         if (image) {
             if (!hasSaved) {
                 PresenterManager::ClearInfo(image);
-                image->Despawn();
+                image->Despawn(false);
                 Object::Destroy(image);
             } 
         }
@@ -213,7 +213,7 @@ namespace ImageFactory::UI {
         this->image = image;
         this->backUpImage = image;
 
-        image->Spawn();
+        image->Spawn(false);
 
         editing = true;
         hasSaved = false;

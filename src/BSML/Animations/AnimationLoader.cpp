@@ -17,11 +17,9 @@
 #include "GlobalNamespace/SharedCoroutineStarter.hpp"
 #include "System/Func_1.hpp"
 
-#include "UnityEngine/UI/RawImage.hpp"
 #include "UnityEngine/GameObject.hpp"
 #include "UnityEngine/Transform.hpp"
 #include "UnityEngine/Resources.hpp"
-#include "questui/shared/ArrayUtil.hpp"
 #include "UI/ImageCreationViewController.hpp"
 
 DEFINE_TYPE(BSML, AnimationLoader);

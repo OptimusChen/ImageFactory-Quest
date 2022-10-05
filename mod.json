@@ -12,7 +12,7 @@
 		"libImageFactory.so"
 	],
 	"libraryFiles": [
-		"libbeatsaber-hook_2_3_2.so"
+		"libbeatsaber-hook_3_12_0.so"
 	],
 	"fileCopies": []
 }

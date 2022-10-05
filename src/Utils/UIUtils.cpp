@@ -10,11 +10,10 @@
 #include "UnityEngine/RectTransform.hpp"
 #include "UnityEngine/UI/VerticalLayoutGroup.hpp"
 #include "UnityEngine/UI/LayoutElement.hpp"
-#include "UnityEngine/UI/RawImage.hpp"
-#include "HMUI/CurvedCanvasSettingsHelper.hpp"
 #include "UnityEngine/SpriteMeshType.hpp"
 #include "UnityEngine/TextureWrapMode.hpp"
 #include "UnityEngine/Texture2D.hpp"
+#include "HMUI/CurvedCanvasSettingsHelper.hpp"
 #include "HMUI/ImageView.hpp"
 #include "Helpers/utilities.hpp"
 #include "BSML/Animations/AnimationInfo.hpp"
@@ -166,9 +165,9 @@ namespace UIUtils {
         return nullptr;
     }
 
-    GlobalNamespace::PlayerDataModel* data = nullptr;
+    SafePtrUnity<GlobalNamespace::PlayerDataModel> model = nullptr;
     bool NoHud() {
-        if (!data) data = Object::FindObjectOfType<GlobalNamespace::PlayerDataModel*>();
+        if (!model.isAlive()) model = Object::FindObjectOfType<GlobalNamespace::PlayerDataModel*>();
 
         bool ignore = getPluginConfig().IgnoreNoTextAndHud.GetValue();
 
@@ -176,6 +175,6 @@ namespace UIUtils {
             return true;
         }
 
-        return ignore == data->get_playerData()->get_playerSpecificSettings()->get_noTextsAndHuds();
+        return ignore == model->get_playerData()->get_playerSpecificSettings()->get_noTextsAndHuds();
     }
 }

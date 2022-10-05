@@ -49,10 +49,10 @@ namespace ImageFactory {
             if (pair.second.starts_with(EVERYWHERE) ||
                 pair.second.starts_with(IN_MENU)) {
                 if (!pair.first) return;
-                pair.first->Spawn();
+                pair.first->Spawn(false);
             } else {
                 if (!pair.first) return;
-                pair.first->Despawn();
+                pair.first->Despawn(false);
             }
         }
     }
@@ -60,14 +60,14 @@ namespace ImageFactory {
     void PresenterManager::SpawnAll() {
         for (std::pair<IFImage*, StringW> pair : *MAP) {
             if (!pair.first) return;
-            pair.first->Spawn();
+            pair.first->Spawn(false);
         }
         }
 
     void PresenterManager::DespawnAll() {
         for (std::pair<IFImage*, StringW> pair : *MAP) {
             if (!pair.first) return;
-            pair.first->Despawn();
+            pair.first->Despawn(false);
         }
     }
 
@@ -75,7 +75,7 @@ namespace ImageFactory {
         for (std::pair<IFImage*, StringW> pair : *MAP) {
             if (pair.second.starts_with(str)) {
                 if (!pair.first) return;
-                pair.first->Spawn();
+                pair.first->Spawn(true);
             }
         }
     }
@@ -84,7 +84,7 @@ namespace ImageFactory {
         for (std::pair<IFImage*, StringW> pair : *MAP) {
             if (pair.second.starts_with(str)) {
                 if (!pair.first) return;
-                pair.first->Despawn();
+                pair.first->Despawn(true);
             }
         }
     }
@@ -93,7 +93,7 @@ namespace ImageFactory {
         for (std::pair<IFImage*, std::string> pair : *MAP) {
             if (pair.second.compare(str) == 0) {
                 if (pair.first->GetExtraData(key, val).compare(val) == 0) {
-                    pair.first->Spawn();
+                    pair.first->Spawn(true);
                 }
             }
         }
@@ -103,16 +103,16 @@ namespace ImageFactory {
         for (std::pair<IFImage*, std::string> pair : *MAP) {
             if (pair.second.compare(str) == 0) {
                 if (pair.first->GetExtraData(key, val).compare(val) == 0) {
-                    pair.first->Despawn();
+                    pair.first->Despawn(true);
                 }
             }
         }
     }
 
     custom_types::Helpers::Coroutine PresenterManager::DespawnAfter(IFImage* image, float time) {
-        image->Spawn();
+        image->Spawn(true);
         co_yield reinterpret_cast<System::Collections::IEnumerator*>( CRASH_UNLESS(WaitForSeconds::New_ctor(time)));
-        image->Despawn();
+        image->Despawn(true);
     }
 
     Presenters::Presenter* PresenterManager::GetPresenter(std::string pres) {
