@@ -121,21 +121,14 @@ namespace ImageFactory::UI {
 
                 });
 
-            options = PresenterManager::GetPresenter(image->presentationoption)->GetUIElements(list->get_transform(), image);
+            presenter = PresenterManager::GetPresenter(image->presentationoption);
+            options = presenter->GetUIElements(list->get_transform(), image);
 
             ImageFactoryFlowCoordinator* flow = Object::FindObjectsOfType<ImageFactoryFlowCoordinator*>().First();
 
             auto cancelButton = BeatSaberUI::CreateUIButton(this->get_transform(), "", {-22.0f, -38.0f}, {40.0f, 8.0f}, 
                 [=]() {
                     flow->ResetViews();
-
-                    if (editing) {
-                        image->Despawn(false);
-                        backUpImage->Spawn(false);
-                        PresenterManager::ClearInfo(image);
-                        PresenterManager::Parse(backUpImage, backUpImage->presentationoption);
-                        PresenterManager::SpawnInMenu();
-                    }
             });
 
             BeatSaberUI::CreateText(cancelButton->get_transform(), "CANCEL")->set_alignment(TMPro::TextAlignmentOptions::Center);
@@ -177,12 +170,20 @@ namespace ImageFactory::UI {
     }
 
     void ImageCreatorViewController::DidDeactivate(bool removedFromHierarchy, bool screenSystemEnabling) {
-        if (image) {
+        if (image) { 
+            if (editing) {
+                image->Despawn(false);
+                backUpImage->Spawn(false);
+                PresenterManager::ClearInfo(image);
+                PresenterManager::Parse(backUpImage, backUpImage->presentationoption);
+                hasSaved = true;
+            }
+
             if (!hasSaved) {
                 PresenterManager::ClearInfo(image);
                 image->Despawn(false);
                 Object::Destroy(image);
-            } 
+            }
         }
 
         PresenterManager::SpawnInMenu();
@@ -193,7 +194,10 @@ namespace ImageFactory::UI {
             Object::Destroy(options.at(i));
         }
         
-        options = PresenterManager::GetPresenter(image->presentationoption)->GetUIElements(list, image);
+        delete presenter;
+
+        presenter = PresenterManager::GetPresenter(image->presentationoption);
+        options = presenter->GetUIElements(list, image);
     }
 
     void ImageCreatorViewController::Initialize(StringW s) {

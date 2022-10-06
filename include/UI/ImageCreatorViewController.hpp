@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IFImage.hpp"
+#include "Presenters/Presenter.hpp"
 #include "HMUI/ViewController.hpp"
 #include "UnityEngine/Coroutine.hpp"
 #include "custom-types/shared/coroutine.hpp"
@@ -18,8 +19,10 @@ DECLARE_CLASS_CODEGEN(ImageFactory::UI, ImageCreatorViewController, HMUI::ViewCo
 
     public: 
         StringW path;
+        std::vector<UnityEngine::GameObject*> options;
+        Presenters::Presenter* presenter;
+        
         void Initialize(StringW str);
         void ResetOptions(UnityEngine::Transform* parent);
-        std::vector<UnityEngine::GameObject*> options;
         custom_types::Helpers::Coroutine UpdateImage();
     );

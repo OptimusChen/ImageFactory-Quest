@@ -17,12 +17,12 @@ namespace ImageFactory::Presenters {
 
         auto combo = BeatSaberUI::CreateIncrementSetting(parent, "Combo", 0, 1, std::stof(image->GetExtraData("combo_combo", "100")), 0, 10000, 
             [=](float f){
-                image->SetExtraData("combo_combo", StringUtils::removeTrailingZeros(round(f)));
+                image->SetExtraData("combo_combo", std::to_string(f));
             })->get_gameObject();
 
         auto duration = BeatSaberUI::CreateIncrementSetting(parent, "Duration (Seconds)", 2, 0.25, std::stof(image->GetExtraData("combo_duration", "1")), 0.25, 100, 
             [=](float f){
-                image->SetExtraData("combo_duration", StringUtils::removeTrailingZeros(round(f)));
+                image->SetExtraData("combo_duration", std::to_string(f));
             })->get_gameObject();
 
         ret.push_back(combo);
@@ -36,12 +36,12 @@ namespace ImageFactory::Presenters {
 
         auto combo = BeatSaberUI::CreateIncrementSetting(parent, "On Every X Combo", 0, 1, std::stof(image->GetExtraData("combo_inc_combo", "100")), 0, 10000,
             [=](float f){
-                image->SetExtraData("combo_inc_combo", StringUtils::removeTrailingZeros(round(f)));
+                image->SetExtraData("combo_inc_combo", std::to_string(f));
             })->get_gameObject();
 
         auto duration = BeatSaberUI::CreateIncrementSetting(parent, "Duration (Seconds)", 2, 0.25, std::stof(image->GetExtraData("combo_inc_duration", "1")), 0, 100, 
             [=](float f){
-                image->SetExtraData("combo_inc_duration", StringUtils::removeTrailingZeros(round(f)));
+                image->SetExtraData("combo_inc_duration", std::to_string(f));
             })->get_gameObject();
 
         ret.push_back(combo);

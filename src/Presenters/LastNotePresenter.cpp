@@ -25,7 +25,7 @@ namespace ImageFactory::Presenters {
 
         auto duration = BeatSaberUI::CreateIncrementSetting(parent, "Duration (Seconds)", 2, 0.25, std::stof(image->GetExtraData("last_note_duration", "1")), 0.25, 100, 
             [=](float f){
-                image->SetExtraData("last_note_duration", StringUtils::removeTrailingZeros(round(f)));
+                image->SetExtraData("last_note_duration", std::to_string(f));
             })->get_gameObject();
 
         ret.push_back(duration);
@@ -41,11 +41,17 @@ namespace ImageFactory::Presenters {
 
         while (!task->get_IsCompleted()) co_yield nullptr;
 
-        auto data = task->get_ResultOnSuccess();
-        auto list = List<NoteData*>::New_ctor();
-        list->AddRange(data->GetBeatmapDataItems<NoteData*>());
-        
-        callback(list->get_Count());
+        if (task->get_ExceptionRecorded()) {
+            callback(0);
+        } else {
+            auto data = task->get_ResultOnSuccess();
+            auto list = List<NoteData*>::New_ctor();
+            list->AddRange(data->GetBeatmapDataItems<NoteData*>());
+            
+            callback(list->get_Count());
+        }
+
+        co_return;
     }
 
     int noteCount = 0;

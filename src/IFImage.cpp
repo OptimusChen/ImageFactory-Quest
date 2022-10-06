@@ -247,6 +247,7 @@ namespace ImageFactory {
         }
 
         spriteRenderer->set_sprite(sprite);
+        spriteRenderer->get_gameObject()->SetActive(false);
         
         Create();
         Update(true);

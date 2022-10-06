@@ -55,7 +55,6 @@ extern "C" void load() {
     custom_types::Register::AutoRegister();
 
     QuestUI::Register::RegisterMainMenuModSettingsFlowCoordinator<UI::ImageFactoryFlowCoordinator*>(modInfo);
-    QuestUI::Register::RegisterModSettingsFlowCoordinator<UI::ImageFactoryFlowCoordinator*>(modInfo);
 
     getLogger().info("Installing hooks...");
     InstallHooks();

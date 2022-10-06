@@ -63,9 +63,9 @@ namespace ImageFactory::UI {
 
             auto hButton = BeatSaberUI::CreateClickableImage(this->get_transform(), help, {-35.0f, -20.0f}, {18.0f, 18.0f}, [=](){ 
                 CreateModal(help, "ImageFactory allows you to place custom images throughout your\ngame. Everything has been designed to be easy for the user to "
-                            "use\nand customize. To learn more about how to use this mod, you can\nwatch this video showcasing how to use it.", this->get_transform(), 
+                            "use\nand customize. To learn more about how to use this mod, you can\nread this for how to use it.", this->get_transform(), 
                             "Help and FAQ", "Youtube Link", [=](HMUI::ModalView* modal){
-                                Application::OpenURL("https://www.youtube.com/watch?v=8WZ-Jvg-OOo");
+                                Application::OpenURL("https://github.com/OptimusChen/ImageFactory-Quest/blob/master/README.md");
                             });
             });
             hButton->set_preserveAspect(true);

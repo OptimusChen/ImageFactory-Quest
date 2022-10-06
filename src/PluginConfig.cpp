@@ -1,5 +1,6 @@
 #include "../include/PluginConfig.hpp"
 
+#include "beatsaber-hook/shared/rapidjson/include/rapidjson/writer.h"
 #include "UI/ImageFactoryFlowCoordinator.hpp"
 #include "UI/ImageEditingViewController.hpp"
 #include "Presenters/PresenterManager.hpp"

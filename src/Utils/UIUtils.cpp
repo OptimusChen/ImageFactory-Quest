@@ -86,7 +86,7 @@ namespace UIUtils {
     }
 
     Backgroundable* CreateHeader(Transform* transform, std::string name) {
-        return CreateHeader(transform, name, {38.0f, 0.0f, 0.0f}, Color(0.1f, 0.1f, 0.1f, 0.2f), 100, 10);
+        return CreateHeader(transform, name, {38.0f, 0.0f, 0.0f}, Color(0.1f, 0.1f, 0.1f, 0.0f), 100, 10);
     }
 
     HMUI::ModalView* CreateModal(Sprite* sprite, std::string desc, Transform* parent, std::string name, std::string buttonText, std::function<void(HMUI::ModalView*)> onClick) {
