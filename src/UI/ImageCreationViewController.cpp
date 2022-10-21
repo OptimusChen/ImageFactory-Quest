@@ -98,13 +98,12 @@ namespace ImageFactory::UI {
 
         Diagnostics::Stopwatch* watch = Diagnostics::Stopwatch::New_ctor();
 
-        int i = 0;
-        while (!(i == images.size())) {
+        for (int i = 0; i < images.size(); i++) {
             watch->Reset();
             watch->Start();
 
             auto image = images.at(i);
-            i++;
+
             HorizontalLayoutGroup* levelBarLayout = BeatSaberUI::CreateHorizontalLayoutGroup(list->get_transform());
             GameObject* prefab = levelBarLayout->get_gameObject();
 
@@ -122,11 +121,9 @@ namespace ImageFactory::UI {
             SetPreferredSize(img, 10.0f, 2.0f);
 
             if (FileUtils::isGifFile(image)) {
-                getLogger().info("GIF TEST 1");
                 img->set_sprite(UIUtils::FirstFrame(image));  
 
                 co_yield reinterpret_cast<Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.5f)));
-                getLogger().info("GIF TEST 2");  
             }
 
             System::IO::FileStream* stream = System::IO::FileStream::New_ctor(image, System::IO::FileMode::Open);
@@ -194,7 +191,7 @@ namespace ImageFactory::UI {
 
             co_yield reinterpret_cast<Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.05)));
 
-            loadingControl->loadingText->set_text("Loading Images... (" + std::to_string(i) + "/" + std::to_string(images.size()) + ")");
+            loadingControl->loadingText->set_text("Loading Images... (" + std::to_string(i + 1) + "/" + std::to_string(images.size()) + ")");
         }
 
         watch->Stop();
@@ -203,7 +200,7 @@ namespace ImageFactory::UI {
         
         list->get_gameObject()->set_active(true);
 
-        if (i == 0) {
+        if (images.size() == 0) {
             loadingControl->refreshText->get_gameObject()->SetActive(true);
             loadingControl->ShowText("No images found in folder!\n/sdCard/ModData/com.beatgames/Mods/ImageFactory/Images/", true);
         } else {

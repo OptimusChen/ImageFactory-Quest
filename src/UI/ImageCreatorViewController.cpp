@@ -136,13 +136,15 @@ namespace ImageFactory::UI {
             auto saveButton = BeatSaberUI::CreateUIButton(this->get_transform(), "", {22.0f, -38.0f}, {40.0f, 8.0f},
                 [=]() {
                     GameObject* screen = image->screen;
+                    auto localPosition = screen->get_transform()->get_localPosition();
+                    auto eulerAngles = screen->get_transform()->get_rotation().get_eulerAngles();
 
-                    image->x = screen->get_transform()->get_localPosition().x;
-                    image->y = screen->get_transform()->get_localPosition().y;
-                    image->z = screen->get_transform()->get_localPosition().z;
-                    image->angleX = screen->get_transform()->get_rotation().get_eulerAngles().x;
-                    image->angleY = screen->get_transform()->get_rotation().get_eulerAngles().y;
-                    image->angleZ = screen->get_transform()->get_rotation().get_eulerAngles().z;
+                    image->x = localPosition.x;
+                    image->y = localPosition.y;
+                    image->z = localPosition.z;
+                    image->angleX = eulerAngles.x;
+                    image->angleY = eulerAngles.y;
+                    image->angleZ = eulerAngles.z;
 
                     if (editing) {
                         Config::Update(image);
@@ -161,6 +163,14 @@ namespace ImageFactory::UI {
                     if (!editing) {
                         flow->imageEditingViewController->Refresh(image);
                     }
+
+                    text->SetText(image->name);
+
+                    if (!image->enabled) {
+                        text->set_color(Color::get_red());
+                    } else {
+                        text->set_color(Color::get_green());
+                    }
     
                     flow->ResetViews();
             });
@@ -173,6 +183,7 @@ namespace ImageFactory::UI {
         if (image) { 
             if (editing) {
                 image->Despawn(false);
+                backUpImage->Update(false);
                 backUpImage->Spawn(false);
                 PresenterManager::ClearInfo(image);
                 PresenterManager::Parse(backUpImage, backUpImage->presentationoption);
@@ -213,9 +224,10 @@ namespace ImageFactory::UI {
         hasSaved = false;
     }
 
-    void ImageCreatorViewController::InitializeEditor(IFImage* image) {
+    void ImageCreatorViewController::InitializeEditor(IFImage* image, TMPro::TextMeshProUGUI* text) {
         this->image = image;
         this->backUpImage = image;
+        this->text = text;
 
         image->Spawn(false);
 
