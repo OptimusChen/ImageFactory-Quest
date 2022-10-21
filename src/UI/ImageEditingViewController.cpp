@@ -94,29 +94,24 @@ namespace ImageFactory::UI {
 
         StringW s = getPluginConfig().Images.GetValue();
         ConfigDocument& config = getPluginConfig().config->config;
-        int i = 0;
 
         vector<std::string> split = StringUtils::split(static_cast<std::string>(s), '/');
 
-        loadingControl->loadingText->set_text("Loading Images... (0/" + std::to_string(split.size()) + ")");
-
-        while (!(i == split.size())) {
+        for (int i = 0; i < split.size(); i++) {
             StringW fileName = split.at(i);
 
             if (fileName->get_Length() != 0) {
                 CreateListElement(list, false, nullptr, fileName);
             }
 
-            i++;
-
-            loadingControl->loadingText->set_text("Loading Images... (" + std::to_string(i - 1) + "/" + std::to_string(split.size() - 1) + ")");
+            loadingControl->loadingText->set_text("Loading Images... (" + std::to_string(i + 1) + "/" + std::to_string(split.size() - 1) + ")");
 
             co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.4f)));
         }
 
         co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.15f)));
 
-        if (i == 0) {   
+        if (elems.size() == 0) {   
             loadingControl->refreshText->get_gameObject()->SetActive(true);
             loadingControl->ShowText("No Images Found in Config!", false);
         } else {
@@ -199,7 +194,7 @@ namespace ImageFactory::UI {
             [=]() {
                 for (std::pair<IFImage*, std::string> pair : *PresenterManager::MAP) {
                     if (pair.first->internalName.starts_with(fileName)) {
-                        Resources::FindObjectsOfTypeAll<ImageFactoryFlowCoordinator*>().First()->EditImage(pair.first);
+                        Resources::FindObjectsOfTypeAll<ImageFactoryFlowCoordinator*>().First()->EditImage(pair.first, text);
                         break;
                     }
                 }

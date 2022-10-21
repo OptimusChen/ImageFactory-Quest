@@ -1,6 +1,7 @@
 #pragma once
 #include "HMUI/FlowCoordinator.hpp"
 #include "HMUI/ViewController.hpp"
+#include "TMPro/TextMeshProUGUI.hpp"
 #include "ImageCreationViewController.hpp"
 #include "ImageEditingViewController.hpp"
 #include "ImageFactoryViewController.hpp"
@@ -15,7 +16,7 @@ DECLARE_CLASS_CODEGEN(ImageFactory::UI, ImageFactoryFlowCoordinator, HMUI::FlowC
     DECLARE_INSTANCE_FIELD_DEFAULT(ImageFactory::UI::ImageFactoryViewController*, imageFactoryViewController, nullptr);
     DECLARE_INSTANCE_METHOD(void, CreateImage, StringW);
     DECLARE_INSTANCE_METHOD(void, ResetViews);
-    DECLARE_INSTANCE_METHOD(void, EditImage, IFImage*);
+    DECLARE_INSTANCE_METHOD(void, EditImage, IFImage*, TMPro::TextMeshProUGUI*);
 );
 
 namespace ImageFactory {

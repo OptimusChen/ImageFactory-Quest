@@ -54,12 +54,12 @@ namespace ImageFactory::UI {
         SetRightScreenViewController(imageEditingViewController, HMUI::ViewController::AnimationType::In);
     }
 
-    void ImageFactoryFlowCoordinator::EditImage(IFImage* image) {
+    void ImageFactoryFlowCoordinator::EditImage(IFImage* image, TMPro::TextMeshProUGUI* text) {
         ImageCreatorViewController* viewController = reinterpret_cast<ImageCreatorViewController*>(BeatSaberUI::CreateViewController<ImageCreatorViewController*>());
 
         if (!viewController) return;
 
-        viewController->InitializeEditor(image);
+        viewController->InitializeEditor(image, text);
 
         PresenterManager::DespawnAll();
         
