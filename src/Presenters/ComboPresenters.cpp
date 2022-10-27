@@ -74,7 +74,7 @@ namespace ImageFactory::Presenters {
 
         auto duration = BeatSaberUI::CreateIncrementSetting(parent, "Duration (Seconds)", 2, 0.25, std::stof(image->GetExtraData("combo_drop_duration", "1")), 0, 100, 
             [=](float f){
-                image->SetExtraData("combo_drop_duration", StringUtils::removeTrailingZeros(round(f)));
+                image->SetExtraData("combo_drop_duration", std::to_string(f));
             })->get_gameObject();
 
         ret.push_back(duration);
@@ -106,6 +106,7 @@ namespace ImageFactory::Presenters {
                 IFImage* image = pair.first;
 
                 if (pair.second.starts_with(PresenterManager::COMBO) &&
+                    pair.second.ends_with(PresenterManager::COMBO) &&
                     combo == stoi(pair.first->GetExtraData("combo_combo", "100"))) {
                     StartCoroutine(PresenterManager::DespawnAfter(image, stof(pair.first->GetExtraData("combo_duration", "1"))));
                 }
