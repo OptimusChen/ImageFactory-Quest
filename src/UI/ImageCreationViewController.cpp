@@ -104,19 +104,19 @@ namespace ImageFactory::UI {
 
             auto image = images.at(i);
 
-            HorizontalLayoutGroup* levelBarLayout = BeatSaberUI::CreateHorizontalLayoutGroup(list->get_transform());
-            GameObject* prefab = levelBarLayout->get_gameObject();
+            SafePtrUnity<HorizontalLayoutGroup> levelBarLayout = BeatSaberUI::CreateHorizontalLayoutGroup(list->get_transform());
+            SafePtrUnity<GameObject> prefab = levelBarLayout->get_gameObject();
 
             levelBarLayout->set_childControlWidth(false);
 
-            LayoutElement* levelBarLayoutElement = levelBarLayout->GetComponent<LayoutElement*>();
+            SafePtrUnity<LayoutElement> levelBarLayoutElement = levelBarLayout->GetComponent<LayoutElement*>();
             levelBarLayoutElement->set_minHeight(10.0f);
             levelBarLayoutElement->set_minWidth(20.0f);
 
-            Sprite* sprite = BeatSaberUI::FileToSprite(image);
-            Object::DontDestroyOnLoad(sprite);
+            SafePtrUnity<Sprite> sprite = BeatSaberUI::FileToSprite(image);
+            // Object::DontDestroyOnLoad(sprite);
 
-            auto img = BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite, Vector2(2.0f, 0.0f), Vector2(10.0f, 2.0f));
+            auto img = BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite.ptr(), Vector2(2.0f, 0.0f), Vector2(10.0f, 2.0f));
 
             SetPreferredSize(img, 10.0f, 2.0f);
 
@@ -189,11 +189,10 @@ namespace ImageFactory::UI {
 
             BeatSaberUI::CreateText(button->get_transform(), "+")->set_alignment(TMPro::TextAlignmentOptions::Center);
 
-            co_yield reinterpret_cast<Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.05)));
+            co_yield reinterpret_cast<Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.1f)));
 
             loadingControl->loadingText->set_text("Loading Images... (" + std::to_string(i + 1) + "/" + std::to_string(images.size()) + ")");
         }
-
         watch->Stop();
 
         co_yield reinterpret_cast<Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.5f)));

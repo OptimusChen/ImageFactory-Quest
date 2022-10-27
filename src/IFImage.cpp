@@ -31,7 +31,7 @@ namespace ImageFactory {
         if (hasBeenCreated) return;
 
         screen = BeatSaberUI::CreateFloatingScreen({scaleX * (width / 3), scaleY * (height / 3)}, {x, y, z}, {angleX, angleY, angleZ}, 0.0f, false, true, 4);
-        image = BeatSaberUI::CreateImage(screen->get_transform(), sprite, {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
+        image = BeatSaberUI::CreateImage(screen->get_transform(), sprite.ptr(), {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
         Object::DontDestroyOnLoad(screen);
         Object::DontDestroyOnLoad(image);
 
@@ -123,7 +123,7 @@ namespace ImageFactory {
         }
 
         screen = BeatSaberUI::CreateFloatingScreen({scaleX * (width / 3), scaleY * (height / 3)}, oldPos, oldRot, 0.0f, false, handle, 4);
-        image = BeatSaberUI::CreateImage(screen->get_transform(), sprite, {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
+        image = BeatSaberUI::CreateImage(screen->get_transform(), sprite.ptr(), {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
         Object::DontDestroyOnLoad(screen);
         Object::DontDestroyOnLoad(image);
 
@@ -246,7 +246,7 @@ namespace ImageFactory {
             sprite = UIUtils::FirstFrame(path);
         }
 
-        spriteRenderer->set_sprite(sprite);
+        spriteRenderer->set_sprite(sprite.ptr());
         spriteRenderer->get_gameObject()->SetActive(false);
         
         Create();

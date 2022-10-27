@@ -159,17 +159,21 @@ namespace ImageFactory::UI {
                     hasSaved = true;
 
                     image->Update(false);
+                    image->Despawn(false);
+                    image->Spawn(false);
 
                     if (!editing) {
                         flow->imageEditingViewController->Refresh(image);
                     }
 
-                    text->SetText(image->name);
+                    if (text) {
+                        text->SetText(image->name);
 
-                    if (!image->enabled) {
-                        text->set_color(Color::get_red());
-                    } else {
-                        text->set_color(Color::get_green());
+                        if (!image->enabled) {
+                            text->set_color(Color::get_red());
+                        } else {
+                            text->set_color(Color::get_green());
+                        }
                     }
     
                     flow->ResetViews();
@@ -184,6 +188,7 @@ namespace ImageFactory::UI {
             if (editing) {
                 image->Despawn(false);
                 backUpImage->Update(false);
+                backUpImage->Despawn(false);
                 backUpImage->Spawn(false);
                 PresenterManager::ClearInfo(image);
                 PresenterManager::Parse(backUpImage, backUpImage->presentationoption);

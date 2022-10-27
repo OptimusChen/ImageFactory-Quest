@@ -153,6 +153,7 @@ namespace ImageFactory {
                 if (config.HasMember(fileName)) {
                     rapidjson::Value& configValue = config[static_cast<std::string>(fileName)];
                     GameObject* obj = GameObject::New_ctor(fileName);
+                    GameObject::DontDestroyOnLoad(obj);
                     IFImage* image = obj->AddComponent<IFImage*>();
                     
                     image->path = configValue["path"].GetString();

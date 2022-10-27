@@ -104,7 +104,7 @@ namespace ImageFactory::UI {
                 CreateListElement(list, false, nullptr, fileName);
             }
 
-            loadingControl->loadingText->set_text("Loading Images... (" + std::to_string(i + 1) + "/" + std::to_string(split.size() - 1) + ")");
+            loadingControl->loadingText->set_text("Loading Images... (" + std::to_string(i) + "/" + std::to_string(split.size() - 1) + ")");
 
             co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.4f)));
         }
