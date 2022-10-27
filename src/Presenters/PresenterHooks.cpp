@@ -17,11 +17,12 @@ namespace ImageFactory::Presenters {
 
     MAKE_HOOK_MATCH(AudioTimeSyncController_StartSong, &AudioTimeSyncController::StartSong, void, AudioTimeSyncController* self, float startTimeOffset) {
         AudioTimeSyncController_StartSong(self, startTimeOffset);
+        PresenterManager::DespawnforAll(PresenterManager::IN_MENU);
+        
         if (!UIUtils::NoHud()) return;
 
         PresenterManager::SpawnforAll(PresenterManager::IN_SONG);
         PresenterManager::SpawnforAll(PresenterManager::FULL_COMBO);
-        PresenterManager::DespawnforAll(PresenterManager::IN_MENU);
 
         Presenter::currentNoteCount = 0;
         Presenter::fullCombo = true;
