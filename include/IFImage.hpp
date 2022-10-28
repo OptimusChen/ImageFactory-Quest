@@ -55,6 +55,7 @@ DECLARE_CLASS_CODEGEN(ImageFactory, IFImage, UnityEngine::MonoBehaviour,
     DECLARE_INSTANCE_FIELD(UnityEngine::SpriteRenderer*, spriteRenderer);
     DECLARE_INSTANCE_FIELD(HMUI::ImageView*, image);
     DECLARE_INSTANCE_FIELD(HMUI::ImageView*, inSongImage);
+    DECLARE_INSTANCE_FIELD(UnityEngine::Sprite*, sprite);
     DECLARE_INSTANCE_FIELD(UnityEngine::GameObject*, screen);
     DECLARE_INSTANCE_FIELD(UnityEngine::GameObject*, inSongScreen);
     DECLARE_CTOR(ctor, UnityEngine::Sprite* sprite, StringW path); 
@@ -66,8 +67,9 @@ DECLARE_CLASS_CODEGEN(ImageFactory, IFImage, UnityEngine::MonoBehaviour,
         StringW fileName; 
         std::string path;
         std::string presentationoption; 
-        SafePtrUnity<UnityEngine::Sprite> sprite;
         bool enabled;
+        custom_types::Helpers::Coroutine SetImage(std::function<void()> onFinished);
+        void SetImage();
         void SetExtraData(StringW key, StringW val);
         std::string GetExtraData(std::string key, std::string defaultVal);
     )

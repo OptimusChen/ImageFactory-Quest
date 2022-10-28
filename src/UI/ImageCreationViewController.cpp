@@ -81,22 +81,15 @@ namespace ImageFactory::UI {
         loadingControl = loadinControlGameObject->GetComponent<LoadingControl*>();
         loadingControl->get_gameObject()->SetActive(true);
         loadingControl->set_enabled(true);
-
-        loadingControl->add_didPressRefreshButtonEvent(
-            custom_types::MakeDelegate<System::Action*>(
-                (std::function<void()>)[this, list]() {
-                    StartCoroutine(this->SetupListElements(list));
-                }));
-
         ConstString load = "Loading Images...";
 
         loadingControl->refreshText->set_text(load);
         loadingControl->loadingText->set_text(load);
         loadingControl->ShowLoading(load);
 
-        list->get_gameObject()->set_active(false);
-
         Diagnostics::Stopwatch* watch = Diagnostics::Stopwatch::New_ctor();
+
+        list->get_gameObject()->set_active(false);
 
         for (int i = 0; i < images.size(); i++) {
             watch->Reset();
@@ -104,19 +97,18 @@ namespace ImageFactory::UI {
 
             auto image = images.at(i);
 
-            SafePtrUnity<HorizontalLayoutGroup> levelBarLayout = BeatSaberUI::CreateHorizontalLayoutGroup(list->get_transform());
-            SafePtrUnity<GameObject> prefab = levelBarLayout->get_gameObject();
+            HorizontalLayoutGroup* levelBarLayout = BeatSaberUI::CreateHorizontalLayoutGroup(list->get_transform());
 
             levelBarLayout->set_childControlWidth(false);
 
-            SafePtrUnity<LayoutElement> levelBarLayoutElement = levelBarLayout->GetComponent<LayoutElement*>();
+            LayoutElement* levelBarLayoutElement = levelBarLayout->GetComponent<LayoutElement*>();
             levelBarLayoutElement->set_minHeight(10.0f);
             levelBarLayoutElement->set_minWidth(20.0f);
 
-            SafePtrUnity<Sprite> sprite = BeatSaberUI::FileToSprite(image);
-            // Object::DontDestroyOnLoad(sprite);
+            Sprite* sprite = BeatSaberUI::FileToSprite(image);
+            Object::DontDestroyOnLoad(sprite);
 
-            auto img = BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite.ptr(), Vector2(2.0f, 0.0f), Vector2(10.0f, 2.0f));
+            auto img = BeatSaberUI::CreateImage(levelBarLayoutElement->get_transform(), sprite, Vector2(2.0f, 0.0f), Vector2(10.0f, 2.0f));
 
             SetPreferredSize(img, 10.0f, 2.0f);
 
@@ -128,7 +120,7 @@ namespace ImageFactory::UI {
 
             System::IO::FileStream* stream = System::IO::FileStream::New_ctor(image, System::IO::FileMode::Open);
 
-            long fileSize = FileUtils::GetFileSize(image, stream);
+            long fileSize = stream->get_Length();
             auto loadTime = watch->get_ElapsedMilliseconds();
 
             BeatSaberUI::CreateText(levelBarLayoutElement->get_transform(), FileUtils::GetFileName(image, false), true);
@@ -193,7 +185,8 @@ namespace ImageFactory::UI {
 
             loadingControl->loadingText->set_text("Loading Images... (" + std::to_string(i + 1) + "/" + std::to_string(images.size()) + ")");
         }
-        watch->Stop();
+
+        // watch->Stop();
 
         co_yield reinterpret_cast<Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.5f)));
         

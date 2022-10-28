@@ -207,8 +207,17 @@ namespace ImageFactory {
                     image->spriteRenderer->get_gameObject()->SetActive(false);
 
                     image->Create();
-                    image->Update(false);
                     image->Despawn(false);
+
+                    bool finished = false;
+
+                    StartCoroutine(image->SetImage([&](){
+                        finished = true;
+                    }));
+
+                    while (!finished) {
+                        co_yield nullptr;
+                    }
                 }
             }
 
@@ -216,6 +225,8 @@ namespace ImageFactory {
         }
 
         PresenterManager::SpawnInMenu();
+
+        getLogger().info("DONE");
 
         co_return;
     }

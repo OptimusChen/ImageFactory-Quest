@@ -91,6 +91,7 @@ namespace BSML {
             }
 
             auto& currentFrameInfo = animationInfo->frames.at(i);
+            getLogger().info("FRAME %p", currentFrameInfo);
 
             if (!texture) {
                 textureSize = GetTextureSize(animationInfo, i);
@@ -115,14 +116,15 @@ namespace BSML {
 
             delete currentFrameInfo;
             currentFrameInfo = nullptr;
-            
         }
+        getLogger().info("TEXTRE %p", texture);
         // note to self, no longer readable = true means you can't encode the texture to png!
         co_yield nullptr;
         auto atlas = texture->PackTextures(textureList, 2, textureSize, true);
+        getLogger().info("ATLAS %p", atlas);
         // cleanup
         for (auto t : textureList) {
-            UnityEngine::Object::Destroy(t);
+            UnityEngine::Object::DestroyImmediate(t);
         }
         if (onProcessed)
             onProcessed(texture, atlas, delays);

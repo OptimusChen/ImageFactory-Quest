@@ -31,7 +31,7 @@ namespace ImageFactory {
         if (hasBeenCreated) return;
 
         screen = BeatSaberUI::CreateFloatingScreen({scaleX * (width / 3), scaleY * (height / 3)}, {x, y, z}, {angleX, angleY, angleZ}, 0.0f, false, true, 4);
-        image = BeatSaberUI::CreateImage(screen->get_transform(), sprite.ptr(), {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
+        image = BeatSaberUI::CreateImage(screen->get_transform(), sprite, {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
         Object::DontDestroyOnLoad(screen);
         Object::DontDestroyOnLoad(image);
 
@@ -117,13 +117,15 @@ namespace ImageFactory {
             oldRot = screen->get_transform()->get_eulerAngles();
         }
 
-        if (hasBeenCreated) {
-            Object::Destroy(screen);
-            Object::Destroy(image);
-        }
+        FloatingScreen* floating = screen->GetComponent<FloatingScreen*>();
+        floating->set_screenSize({scaleX * (width / 3), scaleY * (height / 3)});
+        screen->get_transform()->set_position(oldPos);
+        screen->get_transform()->set_eulerAngles(oldRot);
 
-        screen = BeatSaberUI::CreateFloatingScreen({scaleX * (width / 3), scaleY * (height / 3)}, oldPos, oldRot, 0.0f, false, handle, 4);
-        image = BeatSaberUI::CreateImage(screen->get_transform(), sprite.ptr(), {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
+        RectTransform* rectTransform = reinterpret_cast<RectTransform*>(image->get_transform());
+        rectTransform->set_sizeDelta({scaleX * (width / 3), scaleY * (height / 3)});
+        rectTransform->set_anchoredPosition({x, y});
+
         Object::DontDestroyOnLoad(screen);
         Object::DontDestroyOnLoad(image);
 
@@ -136,16 +138,41 @@ namespace ImageFactory {
 
         screen->SetActive(enabled);
         image->get_gameObject()->SetActive(enabled);
-
-        if (FileUtils::isGifFile(path)) {
-            BSML::Utilities::SetImage(image, "file://" + path);
-        }
     }
 
     void IFImage::Destroy() {
         hasBeenCreated = false;
         Object::Destroy(screen);
         Object::Destroy(image);
+    }
+
+    custom_types::Helpers::Coroutine IFImage::SetImage(std::function<void()> onFinished) {
+        if (FileUtils::isGifFile(path)) {
+            bool finished = false;
+
+            BSML::Utilities::SetImage(image, "file://" + path, false, BSML::Utilities::ScaleOptions(), [&](){
+                finished = true;
+            });
+
+            while (!finished) {
+                co_yield nullptr;
+            }
+        } else {
+            image->set_sprite(sprite);
+        }
+
+        if (onFinished) {
+            onFinished();
+        }
+        co_return;
+    }
+
+    void IFImage::SetImage() {
+        if (FileUtils::isGifFile(path)) {
+            BSML::Utilities::SetImage(image, "file://" + path);
+        } else {
+            image->set_sprite(sprite);
+        }
     }
 
     Vector2 IFImage::get_size() {
@@ -246,11 +273,12 @@ namespace ImageFactory {
             sprite = UIUtils::FirstFrame(path);
         }
 
-        spriteRenderer->set_sprite(sprite.ptr());
+        spriteRenderer->set_sprite(sprite);
         spriteRenderer->get_gameObject()->SetActive(false);
         
         Create();
         Update(true);
+        SetImage();
     }
 }
 
