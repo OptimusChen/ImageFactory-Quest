@@ -10,6 +10,8 @@
 #include "Utils/FileUtils.hpp"
 #include "IFImage.hpp"
 
+#include <fstream>
+
 DEFINE_CONFIG(PluginConfig);
 
 using namespace UnityEngine;
@@ -155,10 +157,18 @@ namespace ImageFactory {
                     GameObject* obj = GameObject::New_ctor(fileName);
                     GameObject::DontDestroyOnLoad(obj);
                     IFImage* image = obj->AddComponent<IFImage*>();
+
+                    image->internalName = fileName;
+
+                    fstream f(configValue["path"].GetString());
+                    
+                    if (!f.good()) {
+                        Delete(image, false);
+                        continue;
+                    }
                     
                     image->path = configValue["path"].GetString();
                     image->sprite = BeatSaberUI::FileToSprite(image->path);
-                    image->internalName = fileName;
                     image->x = configValue["x"].GetFloat();
                     image->y = configValue["y"].GetFloat();
                     image->z = configValue["z"].GetFloat();

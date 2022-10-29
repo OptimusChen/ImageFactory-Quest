@@ -137,11 +137,6 @@ namespace ImageFactory::UI {
                     auto imgModal = BeatSaberUI::CreateImage(modal->get_transform(), img->get_sprite(), Vector2(-18.0f, 8.0f),
                         Vector2(30.0f, 30.0f));
 
-                    if (FileUtils::isGifFile(image)) {
-                        imgModal->set_sprite(UIUtils::FirstFrame(image));
-                        BSML::Utilities::SetImage(imgModal, "file://" + image);
-                    }
-
                     auto anim = BeatSaberUI::CreateText(modal->get_transform(), "Animated: No",
                         Vector2(30.0f, 17.0f));
 
@@ -162,7 +157,7 @@ namespace ImageFactory::UI {
 
                     BeatSaberUI::CreateText(modal->get_transform(), "Load Time: " + std::to_string(loadTime) + " ms", Vector2(30.0f, -7.0f))->set_fontSize(5.0f);
                     
-                    BeatSaberUI::CreateUIButton(modal->get_transform(), "CREATE", Vector2(14.0f, -17.0f),
+                    auto create = BeatSaberUI::CreateUIButton(modal->get_transform(), "CREATE", Vector2(14.0f, -17.0f),
                         Vector2(30.0f, 10.0f), [=]() { 
                             ImageFactoryFlowCoordinator* flow = Object::FindObjectsOfType<ImageFactoryFlowCoordinator*>().First();
 
@@ -175,6 +170,14 @@ namespace ImageFactory::UI {
                         Vector2(30.0f, 10.0f), [=]() { 
                             modal->Hide(true, nullptr);
                         });
+
+                    if (FileUtils::isGifFile(image)) {
+                        create->set_interactable(false);
+                        imgModal->set_sprite(UIUtils::FirstFrame(image));
+                        BSML::Utilities::SetImage(imgModal, "file://" + image, false, BSML::Utilities::ScaleOptions(), [=](){
+                            create->set_interactable(true);
+                        });
+                    }
 
                     modal->Show(true, false, nullptr);
                 });

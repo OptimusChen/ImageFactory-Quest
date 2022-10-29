@@ -86,8 +86,6 @@ namespace BSML {
         } while (!isDelayConsistent && delays[uvIndex] == 0);
 
         for (auto image : get_activeImages()) {
-            il2cpp_utils::getLogger().info("IMAGE %p", image);
-            il2cpp_utils::getLogger().info("SPRITE %p", sprites[uvIndex]);
             image->set_sprite(sprites[uvIndex]);
         }
     }
