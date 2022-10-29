@@ -30,14 +30,10 @@ namespace ImageFactory {
     void IFImage::Create() {
         if (hasBeenCreated) return;
 
-        screen = BeatSaberUI::CreateFloatingScreen({scaleX * (width / 3), scaleY * (height / 3)}, {x, y, z}, {angleX, angleY, angleZ}, 0.0f, false, true, 4);
+        screen = BeatSaberUI::CreateFloatingScreen({scaleX * (width / 3), scaleY * (height / 3)}, {x, y, z}, {angleX, angleY, angleZ}, 0.0f, false, false, 4);
         image = BeatSaberUI::CreateImage(screen->get_transform(), sprite, {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
         Object::DontDestroyOnLoad(screen);
         Object::DontDestroyOnLoad(image);
-
-        // set_position({x, y, z});
-        // set_rotation({angleX, angleY, angleZ});
-        // set_size({scaleX * (width / 3), scaleY * (height / 3)});
 
         screen->set_active(false);
 
@@ -85,20 +81,10 @@ namespace ImageFactory {
         if (!getPluginConfig().Enabled.GetValue()) return;
     
         screen->set_active(true);
-
-        if (anim) {
-            // CreateCoroutine(AnimateIn(this));
-        }
     }
 
     void IFImage::Despawn(bool anim) {
         if (!screen) return;
-         
-        if (anim && canAnimate) {
-            // CreateCoroutine(AnimateOut(this));
-        } else {
-            
-        }
 
         screen->set_active(false);
     }
@@ -119,6 +105,10 @@ namespace ImageFactory {
 
         FloatingScreen* floating = screen->GetComponent<FloatingScreen*>();
         floating->set_screenSize({scaleX * (width / 3), scaleY * (height / 3)});
+        floating->set_showHandle(handle);
+        floating->set_side(4);
+        floating->updateHandle();
+
         screen->get_transform()->set_position(oldPos);
         screen->get_transform()->set_eulerAngles(oldRot);
 
@@ -129,21 +119,17 @@ namespace ImageFactory {
         Object::DontDestroyOnLoad(screen);
         Object::DontDestroyOnLoad(image);
 
-        // if (!handle) {
-        //     set_position(oldPos);
-        // }
-
-        // set_rotation(oldRot);
-        // set_size({scaleX * (width / 3), scaleY * (height / 3)});
-
         screen->SetActive(enabled);
         image->get_gameObject()->SetActive(enabled);
     }
 
     void IFImage::Destroy() {
         hasBeenCreated = false;
-        Object::Destroy(screen);
-        Object::Destroy(image);
+
+        if (screen && image) {
+            Object::Destroy(screen);
+            Object::Destroy(image);
+        }
     }
 
     custom_types::Helpers::Coroutine IFImage::SetImage(std::function<void()> onFinished) {
