@@ -1,5 +1,6 @@
 #include "UI/ImageFactoryViewController.hpp"
 
+#include "IFImage.hpp"
 #include "PluginConfig.hpp"
 #include "Sprites.hpp"
 #include "Utils/UIUtils.hpp"
@@ -7,6 +8,7 @@
 #include "UnityEngine/Application.hpp"
 #include "UnityEngine/Vector2.hpp"
 #include "questui/shared/BeatSaberUI.hpp"
+#include "Presenters/PresenterManager.hpp"
 
 DEFINE_TYPE(ImageFactory::UI, ImageFactoryViewController);
 
@@ -42,7 +44,17 @@ namespace ImageFactory::UI {
 
                 GameObject* scrollableModal = BeatSaberUI::CreateScrollableModalContainer(modal);
                 BeatSaberUI::CreateToggle(scrollableModal->get_transform(), "Enabled", getPluginConfig().Enabled.GetValue(),
-                    [](bool b) { getPluginConfig().Enabled.SetValue(b); });
+                    [](bool b) { 
+                        getPluginConfig().Enabled.SetValue(b);
+
+                        if (b) {
+                            for (std::pair<IFImage*, StringW> pair : *PresenterManager::MAP) {
+                                pair.first->Despawn(false);
+                            }
+                        } else {
+                            PresenterManager::SpawnInMenu();
+                        }
+                    });
 
                 BeatSaberUI::CreateToggle(scrollableModal->get_transform(), "Animate Images", getPluginConfig().AnimateImages.GetValue(),
                     [](bool b) { getPluginConfig().AnimateImages.SetValue(b); });

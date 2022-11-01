@@ -31,7 +31,7 @@ namespace ImageFactory {
         // Can't create twice.
         CRASH_UNLESS(!hasBeenCreated);
 
-        screen = BeatSaberUI::CreateFloatingScreen({scaleX * (width / 3), scaleY * (height / 3)}, {x, y, z}, {angleX, angleY, angleZ}, 0.0f, false, false, 4);
+        screen = BeatSaberUI::CreateFloatingScreen({scaleX * (width / 3), scaleY * (height / 3)}, {x, y, z}, {angleX, angleY, angleZ}, 0.0f, false, true, 4);
         image = BeatSaberUI::CreateImage(screen->get_transform(), sprite, {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
         Object::DontDestroyOnLoad(screen);
         Object::DontDestroyOnLoad(image);
@@ -107,7 +107,9 @@ namespace ImageFactory {
         floating->set_screenSize({scaleX * (width / 3), scaleY * (height / 3)});
         floating->set_showHandle(handle);
         floating->set_side(4);
-        floating->updateHandle();
+        floating->createHandle();
+
+        floating->get_handle()->set_active(handle);
 
         screen->get_transform()->set_position(oldPos);
         screen->get_transform()->set_eulerAngles(oldRot);
