@@ -91,7 +91,6 @@ namespace BSML {
             }
 
             auto& currentFrameInfo = animationInfo->frames.at(i);
-            getLogger().info("FRAME %p", currentFrameInfo);
 
             if (!texture) {
                 textureSize = GetTextureSize(animationInfo, i);
@@ -104,24 +103,32 @@ namespace BSML {
             delays[i] = currentFrameInfo->delay;
 
             auto frameTexture = UnityEngine::Texture2D::New_ctor(currentFrameInfo->width, currentFrameInfo->height, UnityEngine::TextureFormat::RGBA32, false);
+            
+            CRASH_UNLESS(frameTexture);
+            
             frameTexture->set_wrapMode(UnityEngine::TextureWrapMode::Clamp);
             frameTexture->LoadRawTextureData(currentFrameInfo->colors.ptr());
             
             textureList[i] = frameTexture;
 
             if (UnityEngine::Time::get_realtimeSinceStartup() > lastThrottleTime + 0.0005f) {
-                co_yield nullptr;
+                // co_yield nullptr;
                 lastThrottleTime = UnityEngine::Time::get_realtimeSinceStartup();
             }
 
             delete currentFrameInfo;
-            currentFrameInfo = nullptr;
         }
-        getLogger().info("TEXTRE %p", texture);
         // note to self, no longer readable = true means you can't encode the texture to png!
-        co_yield nullptr;
+        // co_yield nullptr;
+        CRASH_UNLESS(textureList);
+
+        for (int i = 0; i < textureList.size(); i++) {
+            CRASH_UNLESS(textureList[i]);
+        }
+
+        CRASH_UNLESS(texture);
+
         auto atlas = texture->PackTextures(textureList, 2, textureSize, true);
-        getLogger().info("ATLAS %p", atlas);
         // cleanup
         for (auto t : textureList) {
             UnityEngine::Object::DestroyImmediate(t);
@@ -130,8 +137,7 @@ namespace BSML {
             onProcessed(texture, atlas, delays);
 
         // we are now done with the animation info
-        delete animationInfo;
-        animationInfo = nullptr;
+        //delete animationInfo;
         co_return;
     }
 

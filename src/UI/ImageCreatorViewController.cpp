@@ -160,7 +160,6 @@ namespace ImageFactory::UI {
 
                     image->Update(false);
                     image->Despawn(false);
-                    image->Spawn(false);
 
                     if (!editing) {
                         flow->imageEditingViewController->Refresh(image);

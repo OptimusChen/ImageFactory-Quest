@@ -223,7 +223,7 @@ namespace BSML::Utilities {
         }
 
         if (!imageCache) imageCache.emplace(Dictionary<StringW, UnityEngine::Sprite*>::New_ctor());
-        
+
         UnityEngine::Sprite* sprite = nullptr;
         if (imageCache->TryGetValue(path, byref(sprite)) && sprite && sprite->m_CachedPtr.m_value) {
             // we got a sprite, use it

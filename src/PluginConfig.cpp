@@ -137,106 +137,110 @@ namespace ImageFactory {
             if (clearInfo) {
                 PresenterManager::ClearInfo(image);
             }
+
+            Object::Destroy(image);
         }
     }
 
     custom_types::Helpers::Coroutine Config::LoadImages() {
-        co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.5f)));
+        // Create game object
+        GameObject* obj = GameObject::New_ctor("IFImages");
+        GameObject::DontDestroyOnLoad(obj);
 
-        std::string images = getPluginConfig().Images.GetValue();
+        // Load configuration
         ConfigDocument& config = getPluginConfig().config->config;
 
+        // Parse images and  Loop through each image        
+        std::string images = getPluginConfig().Images.GetValue();
         std::vector<std::string> split = StringUtils::split(images, '/');
-
         for (int i = 0; i < split.size(); i++) {
             StringW fileName = split.at(i);
+            
+            // File not vaid, continue to the next.
+            if ( (fileName->get_Length() == 0) ||         
+                 !config.HasMember(fileName)) {
+                continue;
+            }
 
-            if (fileName->get_Length() != 0) {  
-                if (config.HasMember(fileName)) {
-                    rapidjson::Value& configValue = config[static_cast<std::string>(fileName)];
-                    GameObject* obj = GameObject::New_ctor(fileName);
-                    GameObject::DontDestroyOnLoad(obj);
-                    IFImage* image = obj->AddComponent<IFImage*>();
+            // Create the image object. If the file is not found, clean the image 
+            // from configuration.
+            // Note: Create the image object, so Delete function can take care delete the 
+            // image from config.            
+            rapidjson::Value& configValue = config[static_cast<std::string>(fileName)];
+            IFImage* image = obj->AddComponent<IFImage*>();
+            image->internalName = fileName;
 
-                    image->internalName = fileName;
+            fstream f(configValue["path"].GetString());            
+            if (!f.good()) {
+                Delete(image, false);
+                continue;
+            }
+            
+            // Setup image from the configValue.
+            image->path = configValue["path"].GetString();
+            image->sprite = BeatSaberUI::FileToSprite(image->path);
+            image->x = configValue["x"].GetFloat();
+            image->y = configValue["y"].GetFloat();
+            image->z = configValue["z"].GetFloat();
+            image->angleX = configValue["angleX"].GetFloat();
+            image->angleY = configValue["angleY"].GetFloat();
+            image->angleZ = configValue["angleZ"].GetFloat();
+            image->scaleX = configValue["scaleX"].GetFloat();
+            image->scaleY = configValue["scaleY"].GetFloat();
+            image->width = configValue["width"].GetFloat();
+            image->height = configValue["height"].GetFloat();
+            image->name = configValue["name"].GetString();
+            image->presentationoption = configValue["presentationOption"].GetString();
+            image->enabled = configValue["enabled"].GetBool();
+            image->extraData = new std::unordered_map<std::string, std::string>();
+            image->isAnimated = FileUtils::isGifFile(image->path);
+            image->canAnimate = false;
 
-                    fstream f(configValue["path"].GetString());
-                    
-                    if (!f.good()) {
-                        Delete(image, false);
-                        continue;
-                    }
-                    
-                    image->path = configValue["path"].GetString();
-                    image->sprite = BeatSaberUI::FileToSprite(image->path);
-                    image->x = configValue["x"].GetFloat();
-                    image->y = configValue["y"].GetFloat();
-                    image->z = configValue["z"].GetFloat();
-                    image->angleX = configValue["angleX"].GetFloat();
-                    image->angleY = configValue["angleY"].GetFloat();
-                    image->angleZ = configValue["angleZ"].GetFloat();
-                    image->scaleX = configValue["scaleX"].GetFloat();
-                    image->scaleY = configValue["scaleY"].GetFloat();
-                    image->width = configValue["width"].GetFloat();
-                    image->height = configValue["height"].GetFloat();
-                    image->name = configValue["name"].GetString();
-                    image->presentationoption = configValue["presentationOption"].GetString();
-                    image->enabled = configValue["enabled"].GetBool();
-                    image->extraData = new std::unordered_map<std::string, std::string>();
-                    image->spriteRenderer = image->get_gameObject()->AddComponent<SpriteRenderer*>();
-                    image->isAnimated = FileUtils::isGifFile(image->path);
-                    image->canAnimate = false;
+            // Setup lookup dictionary for extra data.
+            StringW extraData = configValue["extraData"].GetString();
+            if (extraData->get_Length() != 0) {
+                std::vector<std::string> pairs = StringUtils::split(extraData, '/');
 
-                    getLogger().info("SPRITERENDERER: %p", image->spriteRenderer);
+                for (int j = 0; j < pairs.size(); j++) {
+                    StringW pair = pairs.at(j);
 
-                    StringW extraData = configValue["extraData"].GetString();
-
-                    if (extraData->get_Length() != 0) {
-                        std::vector<std::string> pairs = StringUtils::split(extraData, '/');
-
-                        for (int j = 0; j < pairs.size(); j++) {
-                            StringW pair = pairs.at(j);
-
-                            if (pair->get_Length() != 0) {
-                                StringW key = StringUtils::split(pair, ';').at(0);
-                                StringW val = StringUtils::split(pair, ';').at(1);
-                                
-                                image->SetExtraData(key, val);
-                            }
-                        }
-                    }
-
-                    image->fileName = FileUtils::GetFileName(image->path, false);
-                    PresenterManager::Parse(image, image->presentationoption);
-
-                    if (FileUtils::isGifFile(image->path)) {
-                        image->sprite = UIUtils::FirstFrame(image->path);
-                    }
-
-                    image->spriteRenderer->set_sprite(UIUtils::FirstFrame(image->path));
-                    image->spriteRenderer->get_gameObject()->SetActive(false);
-
-                    image->Create();
-                    image->Despawn(false);
-
-                    bool finished = false;
-
-                    StartCoroutine(image->SetImage([&](){
-                        finished = true;
-                    }));
-
-                    while (!finished) {
-                        co_yield nullptr;
+                    if (pair->get_Length() != 0) {
+                        StringW key = StringUtils::split(pair, ';').at(0);
+                        StringW val = StringUtils::split(pair, ';').at(1);
+                        
+                        image->SetExtraData(key, val);
                     }
                 }
             }
 
+            image->fileName = FileUtils::GetFileName(image->path, false);
+            PresenterManager::Parse(image, image->presentationoption);
+
+            if (FileUtils::isGifFile(image->path)) {
+                image->sprite = UIUtils::FirstFrame(image->path);
+            }
+
+            image->Create();
+            image->Update(false);
+            image->Despawn(false);
+
+            bool finished = false;
+
+            StartCoroutine(image->SetImage([&finished](){
+                finished = true;
+            }));
+
+            while (!finished) {
+                co_yield nullptr;
+            }
+            
+            // Yield 50ms to give other threads a chance to run.
             co_yield reinterpret_cast<System::Collections::IEnumerator*>(CRASH_UNLESS(WaitForSeconds::New_ctor(0.05f)));
         }
 
         PresenterManager::SpawnInMenu();
 
-        getLogger().info("DONE");
+        getLogger().info("DONE LOADING");
 
         co_return;
     }

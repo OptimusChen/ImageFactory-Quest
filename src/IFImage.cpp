@@ -28,7 +28,8 @@ DEFINE_TYPE(ImageFactory, IFImage);
 namespace ImageFactory {
 
     void IFImage::Create() {
-        if (hasBeenCreated) return;
+        // Can't create twice.
+        CRASH_UNLESS(!hasBeenCreated);
 
         screen = BeatSaberUI::CreateFloatingScreen({scaleX * (width / 3), scaleY * (height / 3)}, {x, y, z}, {angleX, angleY, angleZ}, 0.0f, false, false, 4);
         image = BeatSaberUI::CreateImage(screen->get_transform(), sprite, {x, y}, {scaleX * (width / 3), scaleY * (height / 3)});
@@ -36,7 +37,6 @@ namespace ImageFactory {
         Object::DontDestroyOnLoad(image);
 
         screen->set_active(false);
-
         hasBeenCreated = true;
     }
 
@@ -84,7 +84,7 @@ namespace ImageFactory {
     }
 
     void IFImage::Despawn(bool anim) {
-        if (!screen) return;
+        CRASH_UNLESS(screen);
 
         screen->set_active(false);
     }
@@ -124,6 +124,8 @@ namespace ImageFactory {
     }
 
     void IFImage::Destroy() {
+        if (!hasBeenCreated) return;
+        
         hasBeenCreated = false;
 
         if (screen && image) {
@@ -248,7 +250,6 @@ namespace ImageFactory {
         extraData = new std::unordered_map<std::string, std::string>();
         canAnimate = false;
         isAnimated = FileUtils::isGifFile(path);
-        spriteRenderer = get_gameObject()->AddComponent<SpriteRenderer*>();
 
         if (FileUtils::isGifFile(path)) {
             auto gifReader = EasyGifReader::openFile(path.c_str());
@@ -258,9 +259,6 @@ namespace ImageFactory {
 
             sprite = UIUtils::FirstFrame(path);
         }
-
-        spriteRenderer->set_sprite(sprite);
-        spriteRenderer->get_gameObject()->SetActive(false);
         
         Create();
         Update(true);
