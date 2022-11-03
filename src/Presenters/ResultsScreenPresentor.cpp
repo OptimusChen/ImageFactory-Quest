@@ -27,11 +27,13 @@ namespace ImageFactory::Presenters {
     MAKE_HOOK_MATCH(ResultsViewController_DidActivate, &ResultsViewController::DidActivate, void, ResultsViewController* self, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
         ResultsViewController_DidActivate(self, firstActivation, addedToHierarchy, screenSystemEnabling);
 
-        if (self->levelCompletionResults->energy < 1) {
+        if (self->levelCompletionResults->energy <= 0) {
             PresenterManager::SpawnExtraData(PresenterManager::RESULTS_SCREEN, "results_when", "Failed");
         } else {
             PresenterManager::SpawnExtraData(PresenterManager::RESULTS_SCREEN, "results_when", "Passed");
         }
+
+        getLogger().info("ENERGY %f", self->levelCompletionResults->energy);
         
         PresenterManager::SpawnExtraData(PresenterManager::RESULTS_SCREEN, "results_when", "Finished");
     }

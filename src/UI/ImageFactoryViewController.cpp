@@ -47,7 +47,7 @@ namespace ImageFactory::UI {
                     [](bool b) { 
                         getPluginConfig().Enabled.SetValue(b);
 
-                        if (b) {
+                        if (!b) {
                             for (std::pair<IFImage*, StringW> pair : *PresenterManager::MAP) {
                                 pair.first->Despawn(false);
                             }

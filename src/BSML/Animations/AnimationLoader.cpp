@@ -71,7 +71,8 @@ namespace BSML {
         int textureSize = get_atlasSizeLimit(), width = 0, height = 0;
         UnityEngine::Texture2D* texture = nullptr;
         auto textureList = ArrayW<UnityEngine::Texture2D*>(animationInfo->frameCount);
-        ArrayW<float> delays = ArrayW<float>(animationInfo->frameCount);
+        std::vector<float> delays; // = ArrayW<float>(animationInfo->frameCount);
+        delays.resize(animationInfo->frameCount);
 
         float lastThrottleTime = UnityEngine::Time::get_realtimeSinceStartup();
 
@@ -133,8 +134,12 @@ namespace BSML {
         for (auto t : textureList) {
             UnityEngine::Object::DestroyImmediate(t);
         }
-        if (onProcessed)
-            onProcessed(texture, atlas, delays);
+        if (onProcessed) {
+            auto arr = ArrayW<float>(animationInfo->frameCount);
+            std::copy(delays.begin(), delays.end(), arr.begin());
+
+            onProcessed(texture, atlas, arr);
+        }
 
         // we are now done with the animation info
         //delete animationInfo;
