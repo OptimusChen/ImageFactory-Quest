@@ -4,8 +4,6 @@ Place and customize images throughout your game.
 
 Gifs can be buggy so report all bugs to Github Issues
 
-Quest Port of https://github.com/Auros/ImageFactory
-
 ## Presenters
 Presenters in ImageFactory determine when the images appear in the game
 
