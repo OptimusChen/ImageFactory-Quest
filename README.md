@@ -2,7 +2,51 @@
 
 Place and customize images throughout your game.
 
+Gifs can be buggy so report all bugs to Github Issues
+
 Quest Port of https://github.com/Auros/ImageFactory
+
+## Presenters
+Presenters in ImageFactory determine when the images appear in the game
+
+### Everywhere
+Is always active
+
+### In Menu
+Only active when in the menu
+
+### Results Screen
+Only active in the results screen
+
+### In Song
+Only active when in a song
+
+### %
+Only active when above or below a set percentage
+
+### % Range
+Only active in a certain percentage range
+
+### Combo
+Spawns in when you reach a exact combo amount
+
+### Combo Increment
+Spawns every X combo
+
+### Combo Hold
+Only active when your combo is above or below a certain amount
+
+### Combo Drop
+Spawns whenever your combo resets to 0
+
+### Full Combo
+Only active when you are holding a full combo
+
+### In Pause Menu
+Only active in the pause menu
+
+### Last Note
+Spawns when the last note of a song appears
 
 ## Credits
 
