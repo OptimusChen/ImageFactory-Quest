@@ -115,7 +115,9 @@
         "xutility": "cpp",
         "__functional_03": "cpp",
         "__memory": "cpp",
-        "__std_stream": "cpp"
+        "__std_stream": "cpp",
+        "ranges": "cpp",
+        "*.tcc": "cpp"
     },
     "cmake.configureOnOpen": true
 }

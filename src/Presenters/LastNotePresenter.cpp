@@ -11,7 +11,6 @@
 #include "GlobalNamespace/BeatmapDataItem.hpp"
 #include "GlobalNamespace/NoteData.hpp"
 #include "System/Threading/Tasks/Task_1.hpp"
-#include "System/Collections/Generic/LinkedList_1.hpp"
 #include "GlobalNamespace/NoteController.hpp"
 
 using namespace QuestUI;
@@ -34,8 +33,8 @@ namespace ImageFactory::Presenters {
     }
 
     custom_types::Helpers::Coroutine GetNotesCount(IDifficultyBeatmap* difficultyBeatmap, std::function<void(int)> callback) {
-        IPreviewBeatmapLevel* level = reinterpret_cast<IPreviewBeatmapLevel*>(difficultyBeatmap->get_level());
-        
+        auto* level = reinterpret_cast<IPreviewBeatmapLevel*>(difficultyBeatmap->get_level());
+
         auto envInfo = level->get_environmentInfo();
         auto task = difficultyBeatmap->GetBeatmapDataAsync(envInfo, nullptr);
 
@@ -46,7 +45,7 @@ namespace ImageFactory::Presenters {
         } else {
             auto data = task->get_ResultOnSuccess();
             auto list = List<NoteData*>::New_ctor();
-            list->AddRange(data->GetBeatmapDataItems<NoteData*>());
+            list->AddRange(data->GetBeatmapDataItems<NoteData*>(0));
             
             callback(list->get_Count());
         }
