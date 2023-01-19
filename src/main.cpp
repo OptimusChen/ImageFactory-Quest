@@ -34,6 +34,24 @@ void ImageFactory::InstallHooks() {
     Presenters::ResultsHooks();
 }
 
+void makeFolders() {
+    std::string dataFolder = "/sdcard/ModData/com.beatgames.beatsaber/Mods/ImageFactory/";
+
+    if (!direxists(dataFolder)) {
+        int result = mkpath(dataFolder);
+        if (result == -1) {
+            getLogger().info("Failed creation of the main data folder!");
+        }
+    }
+
+    if (!direxists(dataFolder + "Images/")) {
+        int result = mkpath(dataFolder + "Images/");
+        if (result == -1) {
+            getLogger().info("Failed creation of the images folder!");
+        }
+    }
+}
+
 // Called at the early stages of game loading
 extern "C" void setup(ModInfo& info) {
     info.id = MOD_ID;
@@ -50,6 +68,8 @@ extern "C" void setup(ModInfo& info) {
 // Called later on in the game loading - a good time to install function hooks
 extern "C" void load() {
     il2cpp_functions::Init();
+
+    makeFolders();
 
     QuestUI::Init();
     custom_types::Register::AutoRegister();
