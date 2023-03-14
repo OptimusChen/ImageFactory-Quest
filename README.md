@@ -2,7 +2,7 @@
 
 Place and customize images throughout your game.
 
-Images go in /sdcard/ModData/com.beatgames.beatsaber/Mods/ImageFactory/Images/
+Images go in /sdcard/ModData/com.beatgames.beatsaber/Mods/ImageFactory/Images/<br>
 You cannot download new images in the mod, you need to copy them to this folder.
 
 Gifs can be buggy so report all bugs to Github Issues
