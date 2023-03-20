@@ -3,9 +3,9 @@
   "name": "ImageFactory",
   "id": "ImageFactory",
   "author": "Optimus",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "packageId": "com.beatgames.beatsaber",
-  "packageVersion": "1.27.0_3631150051",
+  "packageVersion": "1.28.0_4124311467",
   "description": "Place and customize images throughout your game.",
   "coverImage": "cover.png",
   "dependencies": [

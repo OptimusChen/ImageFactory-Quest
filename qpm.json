@@ -4,7 +4,7 @@
   "info": {
     "name": "ImageFactory",
     "id": "ImageFactory",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "url": null,
     "additionalData": {
       "overrideSoName": "libImageFactory.so"
@@ -22,7 +22,7 @@
     },
     {
       "id": "codegen",
-      "versionRange": "^0.32.0",
+      "versionRange": "^0.33.0",
       "additionalData": {}
     },
     {
@@ -37,7 +37,7 @@
     },
     {
       "id": "questui",
-      "versionRange": "^0.17.10",
+      "versionRange": "^0.17.11",
       "additionalData": {}
     },
     {
