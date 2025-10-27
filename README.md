@@ -1,5 +1,7 @@
 # ImageFactory
 
+updating soon
+
 Place and customize images throughout your game.
 
 Images go in /sdcard/ModData/com.beatgames.beatsaber/Mods/ImageFactory/Images/<br>
